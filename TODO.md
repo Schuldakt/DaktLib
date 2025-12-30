@@ -12,7 +12,7 @@
 | Parser | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
 | GUI | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
 | Export | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
-| Overlay | ⬜ Not Started | ⬜ | ⬜ | ⬜ | ⬜ |
+| Overlay | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
 | OCR | ⬜ Not Started | ⬜ | ⬜ | ⬜ | ⬜ |
 
 **Legend:** ✅ Complete | 🔨 In Progress | ⬜ Not Started
@@ -35,14 +35,40 @@
 7. [x] **GUI** - Custom DaktGUI module with full geometry primitives and advanced widgets
 8. [x] **Export** - glTF/GLB and OBJ export with texture conversion and mesh optimization
 
-### Phase 4: Overlay Features
-9. [ ] **Overlay** - External overlay window
+### Phase 4: Overlay Features 🔨 IN PROGRESS
+9. [x] **Overlay** - External overlay window (transparent layered window, hotkeys, screen capture)
 10. [ ] **OCR** - Text recognition
 
 ### Phase 5: Applications
 11. [ ] **DaktExplorer** - File browser/exporter
 12. [ ] **DaktOverlay** - Game overlay
 13. [ ] **DaktParser** - Development/RE tool
+
+---
+
+## Completed: Overlay Module ✅
+
+### Overlay Components
+- [x] `OverlayWindow.hpp/.cpp` - Transparent layered window with D3D11 rendering
+- [x] `HotkeyManager.hpp/.cpp` - Global hotkey registration with RegisterHotKey
+- [x] `ProcessDetector.hpp/.cpp` - Game process detection using Toolhelp32 and EnumWindows
+- [x] `WindowTracker.hpp/.cpp` - Target window position/size tracking
+- [x] `ScreenCapture.hpp/.cpp` - BitBlt and DXGI Desktop Duplication capture
+- [x] `Panel.hpp/.cpp` - Panel interface and base implementations
+
+### Overlay Features
+- [x] Transparent overlay window (WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TRANSPARENT)
+- [x] D3D11 with premultiplied alpha swap chain
+- [x] DwmExtendFrameIntoClientArea for transparency
+- [x] Global hotkeys with callback system
+- [x] Process detection and monitoring
+- [x] Window position/state tracking
+- [x] Multi-monitor support
+- [x] BitBlt GDI capture
+- [x] DXGI Desktop Duplication capture
+- [x] Image format conversion (BGRA8, RGBA8, Grayscale)
+- [x] Bilinear scaling and cropping utilities
+- [x] Flexible panel system with anchoring
 
 ---
 

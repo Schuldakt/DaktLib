@@ -126,7 +126,7 @@ if(DAKT_BUILD_GUI)
 endif()
 
 if(DAKT_BUILD_OVERLAY)
-    # add_subdirectory(Overlay)
+    add_subdirectory(Overlay)
 endif()
 
 if(DAKT_BUILD_OCR)
