@@ -2,7 +2,7 @@
 
 ## Overview
 
-DaktLib is a modular C++23 library ecosystem designed for Star Citizen modding tools. The library provides a complete stack from low-level utilities to high-level game file parsing, GUI rendering, and overlay systems.
+DaktLib is a modular C++23 library ecosystem designed for gaming modding tools. The library provides a complete stack from low-level utilities to high-level game file parsing, GUI rendering, and overlay systems.
 
 ## Design Philosophy
 
@@ -18,7 +18,7 @@ DaktLib is a modular C++23 library ecosystem designed for Star Citizen modding t
 
 5. **Explicit Over Implicit** - Dependencies injected, not discovered. No hidden singletons or global state (except where explicitly documented).
 
-6. **Windows-First, Cross-Platform Ready** - Primary target is Windows (Star Citizen platform), but Linux/macOS support maintained where possible.
+6. **Windows-First, Cross-Platform Ready** - Primary target is Windows, but Linux/macOS support maintained where possible.
 
 ## Module Hierarchy
 
@@ -115,7 +115,7 @@ Star Citizen file format parsing:
 
 ### GUI (→ Core, Logger, Events)
 Immediate-mode GUI system:
-- Dear ImGui integration
+- DaktGui integration
 - Backends: D3D11, D3D12, OpenGL, Vulkan
 - Custom widgets:
   - PropertyGrid, TreeList, DataTable
@@ -174,7 +174,7 @@ Each module produces a static library with namespaced target:
 | Logger  | None (optional: fmt for older compilers)|
 | VFS     | zlib (pak decompression)               |
 | Parser  | OpenSSL or mbedtls (crypto)            |
-| GUI     | Dear ImGui, GLFW or SDL2               |
+| GUI     | DaktGui, GLFW or SDL2               |
 | Overlay | Windows SDK only                       |
 | OCR     | Tesseract or Windows SDK               |
 | Export  | FBX SDK or OpenFBX, tinygltf           |
@@ -218,7 +218,7 @@ auto loadConfig(StringView path) -> Result<Config, Error> {
 - **Core types**: Thread-safe for independent instances, not for shared access
 - **Logger**: Thread-safe (lock-free ring buffer for async)
 - **Events**: Main-thread only unless explicitly documented
-- **GUI**: Main-thread only (ImGui limitation)
+- **GUI**: Main-thread only
 - **File operations**: Thread-safe for independent files
 
 ## Memory Management

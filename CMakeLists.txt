@@ -36,6 +36,37 @@ option(DAKT_BUILD_TESTS     "Build unit tests"       ON)
 option(DAKT_BUILD_EXAMPLES  "Build examples"         OFF)
 
 # ============================================================================
+# External Dependencies (FetchContent)
+# ============================================================================
+
+include(FetchContent)
+
+# mbedtls - Lightweight crypto library for AES/Salsa20
+FetchContent_Declare(
+    mbedtls
+    GIT_REPOSITORY https://github.com/Mbed-TLS/mbedtls.git
+    GIT_TAG        v3.6.2
+    GIT_SHALLOW    TRUE
+)
+
+# zlib - Compression for CryPak/P4K archives
+FetchContent_Declare(
+    zlib
+    GIT_REPOSITORY https://github.com/madler/zlib.git
+    GIT_TAG        v1.3.1
+    GIT_SHALLOW    TRUE
+)
+
+# Configure mbedtls options before fetching
+set(ENABLE_TESTING OFF CACHE BOOL "" FORCE)
+set(ENABLE_PROGRAMS OFF CACHE BOOL "" FORCE)
+set(MBEDTLS_FATAL_WARNINGS OFF CACHE BOOL "" FORCE)
+
+# Fetch dependencies
+message(STATUS "Fetching external dependencies...")
+FetchContent_MakeAvailable(mbedtls zlib)
+
+# ============================================================================
 # Compiler Configuration
 # ============================================================================
 
@@ -91,7 +122,7 @@ if(DAKT_BUILD_PARSER)
 endif()
 
 if(DAKT_BUILD_GUI)
-    # add_subdirectory(GUI)
+    add_subdirectory(GUI)
 endif()
 
 if(DAKT_BUILD_OVERLAY)
