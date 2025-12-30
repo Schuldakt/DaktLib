@@ -1,0 +1,33 @@
+[submodule "Bindings"]
+	path = Bindings
+	url = https://github.com/Schuldakt/DaktLib-Bindings.git
+[submodule "Config"]
+	path = Config
+	url = https://github.com/Schuldakt/DaktLib-Config.git
+[submodule "Core"]
+	path = Core
+	url = https://github.com/Schuldakt/DaktLib-Core.git
+[submodule "Events"]
+	path = Events
+	url = https://github.com/Schuldakt/DaktLib-Events.git
+[submodule "Export"]
+	path = Export
+	url = https://github.com/Schuldakt/DaktLib-Export.git
+[submodule "GUI"]
+	path = GUI
+	url = https://github.com/Schuldakt/DaktLib-GUI.git
+[submodule "Logger"]
+	path = Logger
+	url = https://github.com/Schuldakt/DaktLib-Logger.git
+[submodule "OCR"]
+	path = OCR
+	url = https://github.com/Schuldakt/DaktLib-OCR.git
+[submodule "Overlay"]
+	path = Overlay
+	url = https://github.com/Schuldakt/DaktLib-Overlay.git
+[submodule "Parser"]
+	path = Parser
+	url = https://github.com/Schuldakt/DaktLib-Parser.git
+[submodule "VFS"]
+	path = VFS
+	url = https://github.com/Schuldakt/DaktLib-VFS.git
