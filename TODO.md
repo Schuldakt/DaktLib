@@ -1,5 +1,27 @@
 # DaktLib TODO
 
+## Module Dependency Graph (Minimal Dependencies)
+
+Each module is designed to be independently usable in any C++ project:
+
+```
+Core (zero external deps)
+├── Logger (Core only)
+├── Events (Core only)
+├── Config (Core only)
+├── VFS (Core only)
+├── Parser (Core only + mbedtls/zlib for crypto/compression)
+├── GUI (Core only)
+├── Export (Core only)
+├── Overlay (Core + Logger - Logger is optional private dep)
+└── OCR (Core + Logger - Logger is optional private dep)
+```
+
+**Note:** Logger in Overlay and OCR is a PRIVATE dependency - users of those modules
+don't need Logger unless they want logging.
+
+---
+
 ## Module Implementation Status
 
 | Module | Status | Headers | Implementation | Tests | Docs |
