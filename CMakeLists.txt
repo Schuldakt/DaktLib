@@ -70,24 +70,24 @@ if(DAKT_BUILD_CORE)
     add_subdirectory(Core)
 endif()
 
-if(DAKT_BUILD_CONFIG)
-    # add_subdirectory(Config)
+if(DAKT_BUILD_LOGGER)
+    add_subdirectory(Logger)
 endif()
 
-if(DAKT_BUILD_LOGGER)
-    # add_subdirectory(Logger)
+if(DAKT_BUILD_CONFIG)
+    add_subdirectory(Config)
 endif()
 
 if(DAKT_BUILD_EVENTS)
-    # add_subdirectory(Events)
+    add_subdirectory(Events)
 endif()
 
 if(DAKT_BUILD_VFS)
-    # add_subdirectory(VFS)
+    add_subdirectory(VFS)
 endif()
 
 if(DAKT_BUILD_PARSER)
-    # add_subdirectory(Parser)
+    add_subdirectory(Parser)
 endif()
 
 if(DAKT_BUILD_GUI)
