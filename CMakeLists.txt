@@ -134,7 +134,7 @@ if(DAKT_BUILD_OCR)
 endif()
 
 if(DAKT_BUILD_EXPORT)
-    # add_subdirectory(Export)
+    add_subdirectory(Export)
 endif()
 
 # ============================================================================
