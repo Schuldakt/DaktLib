@@ -13,7 +13,7 @@
 | GUI | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
 | Export | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
 | Overlay | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
-| OCR | ⬜ Not Started | ⬜ | ⬜ | ⬜ | ⬜ |
+| OCR | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
 
 **Legend:** ✅ Complete | 🔨 In Progress | ⬜ Not Started
 
@@ -35,14 +35,40 @@
 7. [x] **GUI** - Custom DaktGUI module with full geometry primitives and advanced widgets
 8. [x] **Export** - glTF/GLB and OBJ export with texture conversion and mesh optimization
 
-### Phase 4: Overlay Features 🔨 IN PROGRESS
+### Phase 4: Overlay Features ✅ COMPLETE
 9. [x] **Overlay** - External overlay window (transparent layered window, hotkeys, screen capture)
-10. [ ] **OCR** - Text recognition
+10. [x] **OCR** - Text recognition (Windows.Media.Ocr, preprocessing, region caching)
 
 ### Phase 5: Applications
 11. [ ] **DaktExplorer** - File browser/exporter
 12. [ ] **DaktOverlay** - Game overlay
 13. [ ] **DaktParser** - Development/RE tool
+
+---
+
+## Completed: OCR Module ✅
+
+### OCR Components
+- [x] `OCR.hpp` - Main module header
+- [x] `OcrResult.hpp` - Recognition result structures (OcrWord, OcrLine, OcrResult)
+- [x] `IOcrEngine.hpp` - Abstract engine interface with OcrImage, OcrEngineConfig
+- [x] `WindowsOcrEngine.hpp/.cpp` - Windows.Media.Ocr WinRT implementation
+- [x] `ImagePreprocessor.hpp/.cpp` - Full preprocessing pipeline (~700 lines)
+- [x] `OcrRegion.hpp/.cpp` - Region definition and caching system
+
+### OCR Features
+- [x] Windows.Media.Ocr backend (Windows 10+)
+- [x] Region-based OCR (recognizeRegion method)
+- [x] Confidence scores (word/line/result level)
+- [x] Image preprocessing pipeline:
+  - [x] Grayscale conversion (ITU-R BT.601)
+  - [x] Bilinear scaling
+  - [x] Contrast enhancement
+  - [x] Binarization (Fixed, Otsu, Adaptive)
+  - [x] Denoising (Median, Gaussian, Bilateral)
+  - [x] Morphological operations (dilate/erode)
+- [x] Result caching with TTL
+- [x] Predefined Star Citizen UI regions (SCRegions namespace)
 
 ---
 

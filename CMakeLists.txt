@@ -130,7 +130,7 @@ if(DAKT_BUILD_OVERLAY)
 endif()
 
 if(DAKT_BUILD_OCR)
-    # add_subdirectory(OCR)
+    add_subdirectory(OCR)
 endif()
 
 if(DAKT_BUILD_EXPORT)
