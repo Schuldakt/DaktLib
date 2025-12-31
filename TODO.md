@@ -30,7 +30,7 @@ don't need Logger unless they want logging.
 | Logger | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
 | Events | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
 | Config | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
-| VFS | ✅ Core Complete | ✅ | ✅ | ⬜ | ⬜ |
+| VFS | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
 | Parser | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
 | GUI | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
 | Export | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
@@ -50,7 +50,7 @@ don't need Logger unless they want logging.
 4. [x] **Config** - INI/TOML/JSON parsing (built-in), hot-reload via ConfigWatcher
 
 ### Phase 2: Data Access ✅ COMPLETE
-5. [x] **VFS** - Virtual file system with mount points (core complete, archive providers pending zlib)
+5. [x] **VFS** - Virtual file system with mount points, P4K/PAK archive providers, overlay support
 6. [x] **Parser** - Star Citizen file format handlers (core parsers complete, crypto pending)
 
 ### Phase 3: UI & Tools ✅ COMPLETE
@@ -62,7 +62,7 @@ don't need Logger unless they want logging.
 10. [x] **OCR** - Text recognition (Windows.Media.Ocr, preprocessing, region caching)
 
 ### Phase 5: Applications
-11. [ ] **DaktExplorer** - File browser/exporter
+11. [x] **DaktExplorer** - File browser/exporter (complete with full GUI support)
 12. [ ] **DaktOverlay** - Game overlay
 13. [ ] **DaktParser** - Development/RE tool
 
@@ -196,8 +196,8 @@ don't need Logger unless they want logging.
 - [x] Case-insensitive path handling
 - [x] Directory enumeration
 - [x] Watch for file changes
-- [ ] P4K archive provider (uses Parser/CryPakParser)
-- [ ] PAK archive provider (uses Parser/CryPakParser)
+- [X] P4K archive provider (uses Parser/CryPakParser)
+- [X] PAK archive provider (uses Parser/CryPakParser)
 
 ---
 

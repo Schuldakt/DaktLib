@@ -34,6 +34,7 @@ option(DAKT_BUILD_OCR       "Build OCR module"       ON)
 option(DAKT_BUILD_EXPORT    "Build Export module"    ON)
 option(DAKT_BUILD_TESTS     "Build unit tests"       ON)
 option(DAKT_BUILD_EXAMPLES  "Build examples"         OFF)
+option(DAKT_BUILD_APPS      "Build applications"     ON)
 
 # ============================================================================
 # External Dependencies (FetchContent)
@@ -136,6 +137,10 @@ endif()
 if(DAKT_BUILD_EXPORT)
     add_subdirectory(Export)
 endif()
+
+# ============================================================================
+# Applications
+# ============================================================================
 
 # ============================================================================
 # Testing
