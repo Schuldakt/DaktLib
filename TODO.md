@@ -1,298 +1,424 @@
-# DaktLib TODO
+# DaktLib Development Roadmap
 
-## Module Dependency Graph (Minimal Dependencies)
+> Master TODO and development roadmap for DaktLib
 
-Each module is designed to be independently usable in any C++ project:
+---
+
+## Table of Contents
+
+1. [Project Phases](#project-phases)
+2. [Phase 0: Foundation](#phase-0-foundation)
+3. [Phase 1: Core Modules](#phase-1-core-modules)
+4. [Phase 2: Visual Modules](#phase-2-visual-modules)
+5. [Phase 3: ML/AI Modules](#phase-3-mlai-modules)
+6. [Phase 4: Integration](#phase-4-integration)
+7. [Phase 5: Polish](#phase-5-polish)
+8. [Module-Specific TODOs](#module-specific-todos)
+
+---
+
+## Project Phases
 
 ```
-Core (zero external deps)
-├── Logger (Core only)
-├── Events (Core only)
-├── Config (Core only)
-├── VFS (Core only)
-├── Parser (Core only + mbedtls/zlib for crypto/compression)
-├── GUI (Core only)
-├── Export (Core only)
-├── Overlay (Core + Logger - Logger is optional private dep)
-└── OCR (Core + Logger - Logger is optional private dep)
+Phase 0: Foundation     ████░░░░░░░░░░░░░░░░  20%  (Weeks 1-2)
+Phase 1: Core Modules   ░░░░░░░░░░░░░░░░░░░░   0%  (Weeks 3-8)
+Phase 2: Visual Modules ░░░░░░░░░░░░░░░░░░░░   0%  (Weeks 9-14)
+Phase 3: ML/AI Modules  ░░░░░░░░░░░░░░░░░░░░   0%  (Weeks 15-18)
+Phase 4: Integration    ░░░░░░░░░░░░░░░░░░░░   0%  (Weeks 19-22)
+Phase 5: Polish         ░░░░░░░░░░░░░░░░░░░░   0%  (Weeks 23-26)
 ```
 
-**Note:** Logger in Overlay and OCR is a PRIVATE dependency - users of those modules
-don't need Logger unless they want logging.
+---
+
+## Phase 0: Foundation
+
+### 0.1 Project Setup
+- [x] Create repository structure
+- [x] Design high-level architecture (ARCHITECTURE.md)
+- [ ] Initialize Cargo workspace
+- [ ] Setup rust-toolchain.toml
+- [ ] Configure CI/CD (GitHub Actions)
+- [ ] Setup code coverage
+- [ ] Configure cargo-deny for license auditing
+- [ ] Create CONTRIBUTING.md
+- [ ] Create CODE_OF_CONDUCT.md
+- [ ] Setup branch protection rules
+
+### 0.2 Development Environment
+- [ ] Create devcontainer configuration
+- [ ] Setup VS Code workspace settings
+- [ ] Create recommended extensions list
+- [ ] Setup pre-commit hooks (rustfmt, clippy)
+- [ ] Configure cargo-make tasks
+
+### 0.3 Documentation Infrastructure
+- [ ] Setup mdBook for documentation
+- [ ] Configure rustdoc settings
+- [ ] Create documentation templates
+- [ ] Setup API documentation generation
+
+### 0.4 C# Bindings Infrastructure
+- [ ] Setup bindings/csharp directory structure
+- [ ] Create solution file (DaktLib.sln)
+- [ ] Configure csbindgen in build process
+- [ ] Create NuGet package templates
+- [ ] Setup C# documentation generation
 
 ---
 
-## Module Implementation Status
+## Phase 1: Core Modules
 
-| Module | Status | Headers | Implementation | Tests | Docs |
-|--------|--------|---------|----------------|-------|------|
-| Core | ✅ Complete | ✅ | ✅ | ⬜ | ✅ |
-| Logger | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
-| Events | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
-| Config | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
-| VFS | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
-| Parser | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
-| GUI | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
-| Export | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
-| Overlay | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
-| OCR | ✅ Complete | ✅ | ✅ | ⬜ | ⬜ |
+### 1.1 daktlib-logger (Week 3)
+- [ ] Define `Logger` trait
+- [ ] Define `LogLevel` enum (FFI-safe)
+- [ ] Implement `NullLogger`
+- [ ] Implement `DefaultLogger` (feature-gated)
+- [ ] Add file rotation support
+- [ ] Add console coloring (feature-gated)
+- [ ] Create FFI exports
+- [ ] Generate C# bindings
+- [ ] Write unit tests
+- [ ] Write documentation
+- [ ] Create ARCHITECTURE.md for module
+- [ ] Create TODO.md for module
 
-**Legend:** ✅ Complete | 🔨 In Progress | ⬜ Not Started
+### 1.2 daktlib-events (Week 4)
+- [ ] Define `Event` trait
+- [ ] Define `EventBus` trait
+- [ ] Define `EventHandler` trait
+- [ ] Implement sync event bus
+- [ ] Implement async event bus (feature-gated)
+- [ ] Add priority ordering
+- [ ] Add event filtering
+- [ ] Create FFI exports
+- [ ] Generate C# bindings
+- [ ] Write unit tests
+- [ ] Write documentation
+- [ ] Create ARCHITECTURE.md for module
+- [ ] Create TODO.md for module
 
----
+### 1.3 daktlib-vfs (Week 5)
+- [ ] Define `Vfs` trait
+- [ ] Define `VfsEntry` trait
+- [ ] Implement in-memory VFS
+- [ ] Implement directory-based VFS
+- [ ] Implement p4k archive reader (Star Citizen)
+- [ ] Add file watching support
+- [ ] Add caching layer
+- [ ] Create FFI exports
+- [ ] Generate C# bindings
+- [ ] Write unit tests
+- [ ] Write documentation
+- [ ] Create ARCHITECTURE.md for module
+- [ ] Create TODO.md for module
 
-## Implementation Order
+### 1.4 daktlib-parser (Week 6)
+- [ ] Define `Parser` trait
+- [ ] Implement DataForge parser (Star Citizen)
+- [ ] Implement XML parser (custom, no deps)
+- [ ] Implement JSON parser (custom, no deps)
+- [ ] Implement CryXML parser
+- [ ] Add schema validation
+- [ ] Add streaming parser support
+- [ ] Create FFI exports
+- [ ] Generate C# bindings
+- [ ] Write unit tests
+- [ ] Write documentation
+- [ ] Create ARCHITECTURE.md for module
+- [ ] Create TODO.md for module
 
-### Phase 1: Foundation ✅ COMPLETE
-1. [x] **Core** - Types, Memory, String, Buffer, Hash, Time, FileSystem, Platform
-2. [x] **Logger** - Multi-sink logging with levels and formatting
-3. [x] **Events** - EventBus, Signal/Slot, queued events
-4. [x] **Config** - INI/TOML/JSON parsing (built-in), hot-reload via ConfigWatcher
+### 1.5 daktlib-sql (Week 7)
+- [ ] Define `Database` trait
+- [ ] Define `Query` trait
+- [ ] Implement custom SQL parser
+- [ ] Implement B-tree storage engine
+- [ ] Implement page-based storage
+- [ ] Add indexing support
+- [ ] Add transaction support (ACID)
+- [ ] Add query optimizer
+- [ ] Create FFI exports
+- [ ] Generate C# bindings
+- [ ] Write unit tests
+- [ ] Write documentation
+- [ ] Create ARCHITECTURE.md for module
+- [ ] Create TODO.md for module
 
-### Phase 2: Data Access ✅ COMPLETE
-5. [x] **VFS** - Virtual file system with mount points, P4K/PAK archive providers, overlay support
-6. [x] **Parser** - Star Citizen file format handlers (core parsers complete, crypto pending)
-
-### Phase 3: UI & Tools ✅ COMPLETE
-7. [x] **GUI** - Custom DaktGUI module with full geometry primitives and advanced widgets
-8. [x] **Export** - glTF/GLB and OBJ export with texture conversion and mesh optimization
-
-### Phase 4: Overlay Features ✅ COMPLETE
-9. [x] **Overlay** - External overlay window (transparent layered window, hotkeys, screen capture)
-10. [x] **OCR** - Text recognition (Windows.Media.Ocr, preprocessing, region caching)
-
-### Phase 5: Applications
-11. [x] **DaktExplorer** - File browser/exporter (complete with full GUI support)
-12. [ ] **DaktOverlay** - Game overlay
-13. [ ] **DaktParser** - Development/RE tool
-
----
-
-## Completed: OCR Module ✅
-
-### OCR Components
-- [x] `OCR.hpp` - Main module header
-- [x] `OcrResult.hpp` - Recognition result structures (OcrWord, OcrLine, OcrResult)
-- [x] `IOcrEngine.hpp` - Abstract engine interface with OcrImage, OcrEngineConfig
-- [x] `WindowsOcrEngine.hpp/.cpp` - Windows.Media.Ocr WinRT implementation
-- [x] `ImagePreprocessor.hpp/.cpp` - Full preprocessing pipeline (~700 lines)
-- [x] `OcrRegion.hpp/.cpp` - Region definition and caching system
-
-### OCR Features
-- [x] Windows.Media.Ocr backend (Windows 10+)
-- [x] Region-based OCR (recognizeRegion method)
-- [x] Confidence scores (word/line/result level)
-- [x] Image preprocessing pipeline:
-  - [x] Grayscale conversion (ITU-R BT.601)
-  - [x] Bilinear scaling
-  - [x] Contrast enhancement
-  - [x] Binarization (Fixed, Otsu, Adaptive)
-  - [x] Denoising (Median, Gaussian, Bilateral)
-  - [x] Morphological operations (dilate/erode)
-- [x] Result caching with TTL
-- [x] Predefined Star Citizen UI regions (SCRegions namespace)
-
----
-
-## Completed: Overlay Module ✅
-
-### Overlay Components
-- [x] `OverlayWindow.hpp/.cpp` - Transparent layered window with D3D11 rendering
-- [x] `HotkeyManager.hpp/.cpp` - Global hotkey registration with RegisterHotKey
-- [x] `ProcessDetector.hpp/.cpp` - Game process detection using Toolhelp32 and EnumWindows
-- [x] `WindowTracker.hpp/.cpp` - Target window position/size tracking
-- [x] `ScreenCapture.hpp/.cpp` - BitBlt and DXGI Desktop Duplication capture
-- [x] `Panel.hpp/.cpp` - Panel interface and base implementations
-
-### Overlay Features
-- [x] Transparent overlay window (WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TRANSPARENT)
-- [x] D3D11 with premultiplied alpha swap chain
-- [x] DwmExtendFrameIntoClientArea for transparency
-- [x] Global hotkeys with callback system
-- [x] Process detection and monitoring
-- [x] Window position/state tracking
-- [x] Multi-monitor support
-- [x] BitBlt GDI capture
-- [x] DXGI Desktop Duplication capture
-- [x] Image format conversion (BGRA8, RGBA8, Grayscale)
-- [x] Bilinear scaling and cropping utilities
-- [x] Flexible panel system with anchoring
+### 1.6 daktlib-http (Week 8)
+- [ ] Define `HttpClient` trait
+- [ ] Define `Request`/`Response` types
+- [ ] Implement TCP socket layer
+- [ ] Implement TLS support (custom or minimal)
+- [ ] Implement HTTP/1.1 protocol
+- [ ] Add connection pooling
+- [ ] Add cookie handling
+- [ ] Add compression support
+- [ ] Create FFI exports
+- [ ] Generate C# bindings
+- [ ] Write unit tests
+- [ ] Write documentation
+- [ ] Create ARCHITECTURE.md for module
+- [ ] Create TODO.md for module
 
 ---
 
-## Completed: GUI Module ✅
+## Phase 2: Visual Modules
 
-### GUI Components
-- [x] `Types.hpp` - Vec2, Rect, Color, Corner flags, Hexagon
-- [x] `Context.hpp/.cpp` - GUI context with input state and window management
-- [x] `DrawList.hpp/.cpp` - Immediate-mode draw commands, clipping, anti-aliasing
-- [x] `Layout.hpp/.cpp` - Layout helpers, spacing, alignment
-- [x] `Theme.hpp/.cpp` - Dark/light themes, color schemes
-- [x] `Font.hpp/.cpp` - TrueType font loading and atlas building
-- [x] `Input.hpp/.cpp` - Keyboard and mouse input processing
-- [x] `Widgets.hpp/.cpp` - Buttons, checkboxes, sliders, text input, combos, trees
-- [x] `Containers.hpp/.cpp` - Windows, panels, scrollbars, tabs, split panes
-- [x] `DataWidgets.hpp/.cpp` - PropertyGrid, DataTable, HexView, Console, Timeline, NodeGraph
-- [x] `D3D11Backend.hpp/.cpp` - DirectX 11 rendering backend
+### 2.1 daktlib-gui (Weeks 9-11)
+- [ ] Define `Widget` trait
+- [ ] Define `Renderer` trait
+- [ ] Define `Layout` system
+- [ ] Implement Direct2D renderer (Windows)
+- [ ] Implement Cairo renderer (Linux/macOS)
+- [ ] Implement widget system
+  - [ ] Label
+  - [ ] Button
+  - [ ] TextInput
+  - [ ] Checkbox
+  - [ ] RadioButton
+  - [ ] Slider
+  - [ ] ProgressBar
+  - [ ] ListView
+  - [ ] TreeView
+  - [ ] TabView
+  - [ ] ScrollView
+  - [ ] Panel/Container
+  - [ ] Window
+  - [ ] Menu/MenuBar
+  - [ ] ContextMenu
+  - [ ] Tooltip
+  - [ ] Dialog
+- [ ] Implement layout managers
+  - [ ] FlexBox
+  - [ ] Grid
+  - [ ] Stack (horizontal/vertical)
+  - [ ] Absolute positioning
+- [ ] Implement theming system
+- [ ] Add accessibility support
+- [ ] Create FFI exports
+- [ ] Generate C# bindings
+- [ ] Write unit tests
+- [ ] Write documentation
+- [ ] Create ARCHITECTURE.md for module
+- [ ] Create TODO.md for module
 
-### GUI Features
-- [x] Custom immediate-mode GUI (not ImGui)
-- [x] All geometry primitives: Rect, Circle, Triangle, Hexagon, Arc, Bezier
-- [x] Comprehensive widget library
-- [x] Property editor with categories
-- [x] Sortable/filterable data tables
-- [x] Hex editor view
-- [x] Console output widget
-- [x] File browser widget
-- [x] Animation timeline
-- [x] Node-based graph editor
-- [x] Theming with dark/light presets
-- [x] Font rendering with anti-aliasing
+### 2.2 daktlib-overlay (Weeks 12-13)
+- [ ] Define `Overlay` trait
+- [ ] Define `Layer` trait
+- [ ] Define `CaptureSource` trait (plug-and-play)
+- [ ] Implement Windows overlay (WS_EX_TOPMOST)
+- [ ] Implement X11 overlay (Linux)
+- [ ] Implement Cocoa overlay (macOS)
+- [ ] Add transparency support
+- [ ] Add click-through support
+- [ ] Add multi-monitor support
+- [ ] Add hotkey management
+- [ ] Integrate with daktlib-gui renderer
+- [ ] Create FFI exports
+- [ ] Generate C# bindings
+- [ ] Write unit tests
+- [ ] Write documentation
+- [ ] Create ARCHITECTURE.md for module
+- [ ] Create TODO.md for module
 
----
-
-## Completed: Parser Module ✅
-
-### Parser Components
-- [x] `Parser.hpp` - Main module header
-- [x] `BinaryReader.hpp/.cpp` - Endian-aware reading, cursor, seek/skip/align
-- [x] `PatternScanner.hpp/.cpp` - IDA-style pattern scanning with wildcards
-- [x] `StructMapper.hpp/.cpp` - POD mapping, CryEngine structure definitions
-- [x] `CryXmlParser.hpp/.cpp` - Binary XML V1/V2 format
-- [x] `LocalizationParser.hpp/.cpp` - global.ini with UTF-8/16 support
-- [x] `MaterialParser.hpp/.cpp` - .mtl material files (XML + CryXml)
-- [x] `Crypto.hpp/.cpp` - AES-256-CBC (mbedtls) and Salsa20 encryption
-- [x] `CryPakParser.hpp/.cpp` - P4K/PAK archives with encryption and zlib
-- [x] `DataCoreParser.hpp/.cpp` - .dcb StarCitizen database files
-- [x] `ObjectContainerParser.hpp/.cpp` - .socpak object container files
-- [x] `ChunkFileParser.hpp/.cpp` - .cgf/.chr/.skin CryEngine geometry
-- [x] `TextureParser.hpp/.cpp` - .dds texture files (DXT1-5, BC1-7)
-
-### Parser Features
-- [x] Endian-aware binary reading
-- [x] Pattern scanning with wildcards
-- [x] CryEngine binary XML parsing
-- [x] Localization file parsing
-- [x] Material file parsing
-- [x] DataCore parsing with crypto
-- [x] P4K archive parsing with zlib
-
----
-
-## Completed: VFS Module ✅
-
-### VFS Components
-- [x] `VFS.hpp` - Main module header
-- [x] `IFileProvider.hpp` - Abstract provider interface
-- [x] `VirtualPath.hpp/.cpp` - Path normalization
-- [x] `PhysicalProvider.hpp/.cpp` - Native filesystem mount
-- [x] `MemoryProvider.hpp/.cpp` - In-memory files
-- [x] `VirtualFileSystem.hpp/.cpp` - Mount points and dispatch
-- [x] `FileWatcher.hpp/.cpp` - Change detection
-
-### VFS Features
-- [x] Unified file access across different sources
-- [x] Mount point priorities for overlays
-- [x] Case-insensitive path handling
-- [x] Directory enumeration
-- [x] Watch for file changes
-- [X] P4K archive provider (uses Parser/CryPakParser)
-- [X] PAK archive provider (uses Parser/CryPakParser)
+### 2.3 daktlib-capture (Week 14)
+- [ ] Define `Capture` trait
+- [ ] Define `Frame` type
+- [ ] Implement DXGI Desktop Duplication (Windows)
+- [ ] Implement BitBlt fallback (Windows)
+- [ ] Implement X11 capture (Linux)
+- [ ] Implement CGDisplayStream (macOS)
+- [ ] Add region selection
+- [ ] Add frame rate limiting
+- [ ] Add format conversion (RGB, RGBA, YUV)
+- [ ] Create FFI exports
+- [ ] Generate C# bindings
+- [ ] Write unit tests
+- [ ] Write documentation
+- [ ] Create ARCHITECTURE.md for module
+- [ ] Create TODO.md for module
 
 ---
 
-## Completed: Export Module ✅
+## Phase 3: ML/AI Modules
 
-### Export Components
-- [x] `Types.hpp` - TextureFormat, TextureInfo, Material, Mesh, Primitive types
-- [x] `Scene.hpp/.cpp` - Scene graph with Vec2/3/4, Quat, Mat4, AABB math types
-- [x] `SceneBuilder.hpp/.cpp` - Scene construction and validation
-- [x] `IExporter.hpp` - Base exporter interface with progress callbacks
-- [x] `GltfExporter.hpp/.cpp` - glTF 2.0 and GLB binary export
-- [x] `ObjExporter.hpp/.cpp` - Wavefront OBJ/MTL export
-- [x] `TextureConverter.hpp/.cpp` - DDS decompression and format conversion
-- [x] `MeshOptimizer.hpp/.cpp` - Mesh optimization and LOD generation
+### 3.1 daktlib-ml (Weeks 15-16)
+- [ ] Define `Model` trait
+- [ ] Define `Tensor` trait
+- [ ] Define `InferenceSession` trait
+- [ ] Implement ONNX model loader
+- [ ] Implement ONNX Runtime wrapper (minimal API)
+- [ ] Add model quantization support
+- [ ] Add batching support
+- [ ] Add GPU acceleration (optional feature)
+- [ ] Add model caching
+- [ ] Create FFI exports
+- [ ] Generate C# bindings
+- [ ] Write unit tests
+- [ ] Write documentation
+- [ ] Create ARCHITECTURE.md for module
+- [ ] Create TODO.md for module
 
-### Export Features
-- [x] Complete scene graph (nodes, meshes, materials, skins, animations)
-- [x] glTF 2.0 JSON export
-- [x] GLB binary format export
-- [x] OBJ geometry with MTL materials
-- [x] PBR material model
-- [x] Coordinate system conversion (Z-up to Y-up)
-- [x] BC1-BC5 texture decompression
-- [x] Mipmap generation (box filter)
-- [x] Bilinear/nearest texture resize
-- [x] Vertex welding (hash-based duplicate removal)
-- [x] Vertex cache optimization (Tom Forsyth algorithm)
-- [x] LOD generation (quadric error metrics)
-
----
-
-## Next Up: Overlay Module
-| Export | tinygltf | ⬜ To fetch |
-| Export | FBX SDK / OpenFBX | ⬜ To decide |
-| OCR | Tesseract | ⬜ Optional |
-
----
-
-## Testing Infrastructure
-
-- [ ] Set up Google Test or Catch2
-- [ ] Create test utilities module
-- [ ] Add benchmark framework
-- [ ] Set up CI/CD pipeline
-- [ ] Add code coverage
-
----
-
-## Documentation
-
-- [x] ARCHITECTURE.md (top-level)
-- [x] Core/ARCHITECTURE.md
-- [x] Core/TODO.md
-- [ ] README.md (project overview)
-- [ ] BUILDING.md (build instructions)
-- [ ] CONTRIBUTING.md (contribution guidelines)
-- [ ] API reference (Doxygen)
+### 3.2 daktlib-ocr (Weeks 17-18)
+- [ ] Define `OcrEngine` trait
+- [ ] Define `TextRegion` type
+- [ ] Define `CaptureSource` integration trait
+- [ ] Implement text detection model
+- [ ] Implement text recognition model
+- [ ] Add preprocessing pipeline
+  - [ ] Grayscale conversion
+  - [ ] Threshold/binarization
+  - [ ] Noise reduction
+  - [ ] Deskewing
+- [ ] Add postprocessing
+  - [ ] Spell correction (optional)
+  - [ ] Confidence scoring
+- [ ] Integrate with daktlib-ml
+- [ ] Integrate with daktlib-capture
+- [ ] Add Star Citizen-specific optimizations
+- [ ] Create FFI exports
+- [ ] Generate C# bindings
+- [ ] Write unit tests
+- [ ] Write documentation
+- [ ] Create ARCHITECTURE.md for module
+- [ ] Create TODO.md for module
 
 ---
 
-## Star Citizen Specific
+## Phase 4: Integration
 
-### File Formats to Support
-- [ ] .p4k (game archives)
-- [ ] .pak (CryPak archives)
-- [ ] .socpak (Object containers)
-- [ ] .dcb (DataCore binary)
-- [ ] .cgf/.chr/.skin (CryEngine geometry)
-- [ ] .mtl (Materials)
-- [ ] .dds (Textures)
-- [ ] global.ini (Localization)
+### 4.1 daktlib-export (Week 19)
+- [ ] Define `Exporter` trait
+- [ ] Define `Format` enum
+- [ ] Implement JSON exporter
+- [ ] Implement CSV exporter
+- [ ] Implement XML exporter
+- [ ] Implement SQLite exporter
+- [ ] Implement custom binary format
+- [ ] Add streaming export support
+- [ ] Add compression support
+- [ ] Create FFI exports
+- [ ] Generate C# bindings
+- [ ] Write unit tests
+- [ ] Write documentation
+- [ ] Create ARCHITECTURE.md for module
+- [ ] Create TODO.md for module
 
-### Overlay Features
-- [ ] Screen text reading (OCR)
-- [ ] Hotkey panels
-- [ ] Info overlay
-- [ ] Map overlay
-- [ ] Inventory helper
+### 4.2 Meta-crate: daktlib (Week 20)
+- [ ] Create unified re-exports
+- [ ] Add feature flags for each module
+- [ ] Create prelude module
+- [ ] Write integration tests
+- [ ] Create usage examples
+
+### 4.3 Example Applications (Weeks 21-22)
+- [ ] Create Rust example: SC Log Parser
+- [ ] Create Rust example: Trading Overlay
+- [ ] Create Rust example: Mining OCR Helper
+- [ ] Create C# example: Inventory Manager
+- [ ] Create C# example: Fleet Tracker
+
+---
+
+## Phase 5: Polish
+
+### 5.1 Documentation (Week 23)
+- [ ] Complete API documentation
+- [ ] Write getting started guide
+- [ ] Write migration guide
+- [ ] Create tutorials
+- [ ] Create video walkthroughs
+
+### 5.2 Performance (Week 24)
+- [ ] Profile all modules
+- [ ] Optimize hot paths
+- [ ] Reduce memory allocations
+- [ ] Benchmark against alternatives
+
+### 5.3 Security Audit (Week 25)
+- [ ] Audit unsafe code blocks
+- [ ] Review FFI boundary safety
+- [ ] Check for memory leaks
+- [ ] Validate input sanitization
+
+### 5.4 Release Preparation (Week 26)
+- [ ] Create release checklist
+- [ ] Write changelog
+- [ ] Prepare NuGet packages
+- [ ] Prepare crates.io packages
+- [ ] Create release announcements
+
+---
+
+## Module-Specific TODOs
+
+Each module has its own detailed TODO in:
+- `crates/daktlib-logger/TODO.md`
+- `crates/daktlib-events/TODO.md`
+- `crates/daktlib-vfs/TODO.md`
+- `crates/daktlib-parser/TODO.md`
+- `crates/daktlib-sql/TODO.md`
+- `crates/daktlib-http/TODO.md`
+- `crates/daktlib-gui/TODO.md`
+- `crates/daktlib-overlay/TODO.md`
+- `crates/daktlib-capture/TODO.md`
+- `crates/daktlib-ml/TODO.md`
+- `crates/daktlib-ocr/TODO.md`
+- `crates/daktlib-export/TODO.md`
+
+---
+
+## Priority Matrix
+
+| Module | Priority | Complexity | Dependencies |
+|--------|----------|------------|--------------|
+| logger | P0 (Critical) | Low | None |
+| events | P1 (High) | Medium | logger (optional) |
+| vfs | P1 (High) | High | logger (optional) |
+| parser | P1 (High) | High | vfs (optional), logger (optional) |
+| sql | P2 (Medium) | Very High | logger (optional) |
+| http | P2 (Medium) | High | logger (optional) |
+| gui | P1 (High) | Very High | logger (optional) |
+| overlay | P1 (High) | High | gui, logger (optional) |
+| capture | P1 (High) | Medium | logger (optional) |
+| ml | P2 (Medium) | High | logger (optional) |
+| ocr | P1 (High) | High | ml, capture, logger (optional) |
+| export | P2 (Medium) | Medium | logger (optional) |
+
+---
+
+## Risk Register
+
+| Risk | Likelihood | Impact | Mitigation |
+|------|------------|--------|------------|
+| Custom GUI complexity | High | High | Start with minimal widget set |
+| ONNX licensing concerns | Medium | High | Use permissive ONNX Runtime license |
+| EAC false positives | Medium | Critical | Test with actual SC client |
+| Cross-platform issues | Medium | Medium | CI testing on all platforms |
+| C# binding generation | Low | Medium | Use battle-tested csbindgen |
+| Performance vs safety | Medium | Medium | Profile early and often |
+
+---
+
+## Milestones
+
+| Milestone | Target Date | Deliverables |
+|-----------|-------------|--------------|
+| M1: Foundation | Week 2 | Workspace setup, CI, docs infrastructure |
+| M2: Core Complete | Week 8 | Logger, Events, VFS, Parser, SQL, HTTP |
+| M3: Visual Complete | Week 14 | GUI, Overlay, Capture |
+| M4: ML Complete | Week 18 | ML, OCR |
+| M5: Alpha Release | Week 22 | Full integration, examples |
+| M6: Beta Release | Week 26 | Polished, documented, tested |
 
 ---
 
 ## Notes
 
-### Build Requirements
-- C++23 compiler (MSVC 19.35+, GCC 13+, Clang 16+)
-- CMake 3.20+
-- Windows SDK (for Overlay module)
+- All time estimates assume full-time development
+- Adjust timeline based on actual complexity discovered
+- Prioritize Star Citizen-specific features for early user feedback
+- Consider community contributions after M5
 
-### Priority Guidelines
-1. Get logging working early (essential for debugging)
-2. VFS + Parser are critical path for tools
-3. GUI needed before Export (need to preview)
-4. Overlay/OCR can be parallel track
+---
 
-### Known Blockers
-- FBX SDK licensing (consider OpenFBX alternative)
-- Tesseract training for Star Citizen fonts
-- EasyAntiCheat compatibility testing
+*Last Updated: 2026-01-03*

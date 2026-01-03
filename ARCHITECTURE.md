@@ -1,236 +1,730 @@
 # DaktLib Architecture
 
+> A modular, dependency-free library ecosystem for Star Citizen utility development
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Rust](https://img.shields.io/badge/rust-1.75+-orange.svg)](https://www.rust-lang.org/)
+
+---
+
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Design Principles](#design-principles)
+3. [Language & Tooling](#language--tooling)
+4. [Workspace Structure](#workspace-structure)
+5. [Module Dependency Graph](#module-dependency-graph)
+6. [Plug-and-Play Architecture](#plug-and-play-architecture)
+7. [Cross-Cutting Concerns](#cross-cutting-concerns)
+8. [C# Bindings Strategy](#c-bindings-strategy)
+9. [EasyAntiCheat Compliance](#easyanticheat-compliance)
+10. [Build System](#build-system)
+11. [Testing Strategy](#testing-strategy)
+12. [Module Specifications](#module-specifications)
+
+---
+
 ## Overview
 
-DaktLib is a modular C++23 library ecosystem designed for gaming modding tools. The library provides a complete stack from low-level utilities to high-level game file parsing, GUI rendering, and overlay systems.
+DaktLib is a collection of **standalone, modular libraries** designed for building third-party utility applications for Star Citizen. Each module is:
 
-## Design Philosophy
+- **100% dependency-free** (no external runtime dependencies for licensing purity)
+- **Independently compilable** (each module is a separate crate)
+- **Cross-platform** (Windows, Linux, macOS)
+- **C# bindable** (FFI exports with generated C# wrappers)
+- **Plug-and-play** (modules communicate via traits, not hard dependencies)
 
-### Core Principles
+### Target Applications
 
-1. **Modern C++23** - Leverages `std::expected`, `std::optional`, `std::span`, `std::format`, concepts, ranges, and other C++23 features for safety and expressiveness.
+- Inventory management tools
+- Trade route calculators
+- Mining/salvage overlays
+- Ship loadout managers
+- Organization management tools
+- Game log analyzers
+- Screen-based OCR utilities
 
-2. **Zero-Cost Abstractions** - No runtime overhead for unused features. Templates and concepts over virtual dispatch where appropriate.
+---
 
-3. **Modular Design** - Each module is an independent static library with explicit dependencies. Enable only what you need.
+## Design Principles
 
-4. **No Exceptions** - Error handling via `Result<T, E>` (alias for `std::expected`). Assertions for programming errors, results for runtime failures.
-
-5. **Explicit Over Implicit** - Dependencies injected, not discovered. No hidden singletons or global state (except where explicitly documented).
-
-6. **Windows-First, Cross-Platform Ready** - Primary target is Windows, but Linux/macOS support maintained where possible.
-
-## Module Hierarchy
-
+### 1. Zero External Dependencies
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                          APPLICATIONS                               │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐               │
-│  │ DaktOverlay  │  │ DaktExplorer │  │  DaktParser  │               │
-│  └──────────────┘  └──────────────┘  └──────────────┘               │
-└─────────────────────────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────────────────────────────────────────────┐
-│                         HIGH-LEVEL MODULES                          │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐               │
-│  │    Export    │  │   Overlay    │  │     OCR      │               │
-│  │  (FBX/glTF)  │  │  (Windows)   │  │  (Tesseract) │               │
-│  └──────────────┘  └──────────────┘  └──────────────┘               │
-└─────────────────────────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────────────────────────────────────────────┐
-│                         MID-LEVEL MODULES                           │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐               │
-│  │     GUI      │  │    Parser    │  │     VFS      │               │
-│  │   (ImGui)    │  │  (SC Files)  │  │  (Virtual)   │               │
-│  └──────────────┘  └──────────────┘  └──────────────┘               │
-└─────────────────────────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────────────────────────────────────────────┐
-│                         FOUNDATION MODULES                          │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐               │
-│  │    Logger    │  │    Events    │  │    Config    │               │
-│  └──────────────┘  └──────────────┘  └──────────────┘               │
-└─────────────────────────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────────────────────────────────────────────┐
-│                              CORE                                   │
-│  Types • Memory • String • Buffer • Hash • Time • FileSystem        │
-│  Platform • Macros                                                  │
-└─────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│                    DaktLib Modules                       │
+│  ┌─────────────────────────────────────────────────────┐│
+│  │  No: Dear ImGui, SQLite bindings, curl, etc.        ││
+│  │  Yes: Pure Rust implementations, OS APIs only       ││
+│  └─────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────┘
 ```
 
-## Module Descriptions
+### 2. Trait-Based Abstraction
+Every module defines traits for its core functionality, allowing:
+- Custom implementations by consumers
+- Easy mocking for tests
+- Swappable backends
 
-### Core (No Dependencies)
-Foundation types and utilities used by all other modules:
-- **Types.hpp** - `Result<T,E>`, `Option<T>`, `Span<T>`, integer aliases, concepts
-- **Memory.hpp** - Allocators (Heap, Arena, Pool), smart pointers, alignment utilities
-- **String.hpp** - String manipulation, parsing, encoding (UTF-8, Base64, Hex)
-- **Buffer.hpp** - Binary buffer, reader/writer with endianness support
-- **Hash.hpp** - FNV-1a, CRC32, XXHash, MurmurHash, compile-time hashing
-- **Time.hpp** - High-resolution timing, timestamps, stopwatch, frame timer
-- **FileSystem.hpp** - File I/O, path utilities, directory traversal, memory mapping
-- **Platform.hpp** - OS detection, system info, environment, byte swapping
-
-### Logger (→ Core)
-Multi-sink logging system:
-- Log levels (Trace, Debug, Info, Warn, Error, Fatal)
-- Sinks: Console, File, RingBuffer, Callback
-- Formatting with `std::format`
-- Thread-safe, lock-free ring buffer for async logging
-
-### Events (→ Core)
-Event system for decoupled communication:
-- Type-safe event bus
-- Signal/slot connections
-- Queued events for cross-thread communication
-- Scoped subscriptions (auto-unsubscribe)
-
-### Config (→ Core)
-Configuration management:
-- TOML, JSON, INI format support
-- Type-safe value access
-- Hot-reload with file watching
-- Hierarchical configuration with overrides
-
-### VFS (→ Core, Config, Logger)
-Virtual file system:
-- Mount points and providers
-- Providers: Physical, Memory, Pak, P4k, Overlay
-- Unified path resolution
-- File watching for hot-reload
-
-### Parser (→ Core, Logger, VFS)
-Star Citizen file format parsing:
-- Binary reader with pattern scanning
-- Crypto: AES, Salsa20 decryption
-- Format handlers:
-  - DataCore (game database)
-  - CryPak (.pak archives)
-  - ObjectContainer (.socpak)
-  - ChunkFile (.cgf, .chr, .skin)
-  - Material, Texture, Localization
-- Discovery tools for reverse engineering
-
-### GUI (→ Core, Logger, Events)
-Immediate-mode GUI system:
-- DaktGui integration
-- Backends: D3D11, D3D12, OpenGL, Vulkan
-- Custom widgets:
-  - PropertyGrid, TreeList, DataTable
-  - HexView, ImageView, Timeline
-  - NodeEditor, CodeEditor
-- Theming and font management
-
-### Overlay (→ Core, Logger, GUI)
-External overlay system (Windows-only):
-- Transparent, click-through window
-- Global hotkey management
-- Process/window detection and tracking
-- Screen capture (BitBlt, DXGI, WGC)
-
-### OCR (→ Core, Logger)
-Text recognition:
-- Tesseract and Windows.Media.Ocr engines
-- Image preprocessing
-- Game-specific font training
-- UI region detection
-
-### Export (→ Core, Logger, Parser)
-3D asset export:
-- Scene graph construction
-- Exporters: FBX, glTF, OBJ, COLLADA
-- Texture conversion
-- Mesh optimization
-
-## Build System
-
-CMake-based with per-module options:
-
-```cmake
-option(DAKT_BUILD_CORE      "Build Core module"      ON)
-option(DAKT_BUILD_LOGGER    "Build Logger module"    ON)
-option(DAKT_BUILD_EVENTS    "Build Events module"    ON)
-option(DAKT_BUILD_CONFIG    "Build Config module"    ON)
-option(DAKT_BUILD_VFS       "Build VFS module"       ON)
-option(DAKT_BUILD_PARSER    "Build Parser module"    ON)
-option(DAKT_BUILD_GUI       "Build GUI module"       ON)
-option(DAKT_BUILD_OVERLAY   "Build Overlay module"   ON)
-option(DAKT_BUILD_OCR       "Build OCR module"       ON)
-option(DAKT_BUILD_EXPORT    "Build Export module"    ON)
-option(DAKT_BUILD_TESTS     "Build unit tests"       ON)
+### 3. Feature-Gated Compilation
+```toml
+[features]
+default = []
+std = []           # Standard library support
+alloc = []         # Heap allocation only
+logging = []       # Enable logging trait integration
+async = []         # Async runtime support
+csharp-ffi = []    # Generate C# bindings
 ```
 
-Each module produces a static library with namespaced target:
-- `Dakt::Core`, `Dakt::Logger`, `Dakt::GUI`, etc.
+### 4. Minimal Public API Surface
+- Expose only what's necessary
+- Internal implementation details stay private
+- Semantic versioning with careful API evolution
 
-## External Dependencies
+### 5. EAC-Safe Design
+- No process injection or memory manipulation
+- External-only interactions with game
+- Screen capture via OS APIs only
 
-| Module  | Dependencies                           |
-|---------|----------------------------------------|
-| Core    | None (C++23 standard library only)     |
-| Config  | toml++ (header-only), nlohmann/json    |
-| Logger  | None (optional: fmt for older compilers)|
-| VFS     | zlib (pak decompression)               |
-| Parser  | OpenSSL or mbedtls (crypto)            |
-| GUI     | DaktGui, GLFW or SDL2               |
-| Overlay | Windows SDK only                       |
-| OCR     | Tesseract or Windows SDK               |
-| Export  | FBX SDK or OpenFBX, tinygltf           |
+---
 
-## Error Handling Strategy
+## Language & Tooling
 
-```cpp
-// Use Result<T, E> for operations that can fail
-Result<Buffer, Error> readFile(StringView path);
+### Why Rust?
 
-// Use Option<T> for values that may not exist
-Option<String> getEnv(StringView name);
+| Requirement | Rust Solution |
+|-------------|---------------|
+| Cross-platform | Native tier-1 support for Windows, Linux, macOS |
+| Dependency-free | `#![no_std]` support, feature flags |
+| C# Bindings | `csbindgen`, `interoptopus`, `uniffi` |
+| Memory Safety | Compile-time borrow checker |
+| Performance | Zero-cost abstractions |
+| Modularity | Cargo workspaces + features |
+| ONNX Support | `ort` crate (optional linking) |
 
-// Use assertions for programming errors
-DAKT_ASSERT(ptr != nullptr);
-DAKT_ASSERT_MSG(index < size, "Index out of bounds");
+### Toolchain Requirements
 
-// Pattern: Early return with error propagation
-auto loadConfig(StringView path) -> Result<Config, Error> {
-    auto data = readFile(path);
-    if (!data) return std::unexpected(data.error());
+```toml
+# rust-toolchain.toml
+[toolchain]
+channel = "stable"
+components = ["rustfmt", "clippy", "rust-src"]
+targets = [
+    "x86_64-pc-windows-msvc",
+    "x86_64-unknown-linux-gnu",
+    "x86_64-apple-darwin",
+    "aarch64-apple-darwin"
+]
+```
+
+### Build Tools
+
+- **Cargo** - Rust package manager and build system
+- **cargo-make** - Task runner for complex builds
+- **csbindgen** - C# binding generation
+- **cargo-nextest** - Fast test runner
+- **cargo-deny** - License and dependency auditing
+
+---
+
+## Workspace Structure
+
+```
+DaktLib/
+├── Cargo.toml              # Workspace root
+├── ARCHITECTURE.md         # This document
+├── TODO.md                 # Development roadmap
+├── LICENSE                 # MIT License
+├── README.md               # Project overview
+│
+├── crates/                 # All Rust crates
+│   ├── daktlib/            # Meta-crate (re-exports all)
+│   │
+│   ├── daktlib-logger/     # Logging traits & default impl
+│   ├── daktlib-events/     # Event system (pub/sub)
+│   ├── daktlib-vfs/        # Virtual file system
+│   ├── daktlib-parser/     # Game data parsers
+│   ├── daktlib-sql/        # Embedded SQL database
+│   ├── daktlib-http/       # HTTP client
+│   ├── daktlib-gui/        # Custom GUI framework
+│   ├── daktlib-overlay/    # Screen overlay system
+│   ├── daktlib-ocr/        # OCR engine
+│   ├── daktlib-ml/         # ML/ONNX inference
+│   ├── daktlib-export/     # Data export formats
+│   └── daktlib-capture/    # Screen capture
+│
+├── bindings/               # Language bindings
+│   └── csharp/
+│       ├── DaktLib.Logger/
+│       ├── DaktLib.Events/
+│       ├── DaktLib.VFS/
+│       ├── DaktLib.Parser/
+│       ├── DaktLib.SQL/
+│       ├── DaktLib.Http/
+│       ├── DaktLib.GUI/
+│       ├── DaktLib.Overlay/
+│       ├── DaktLib.OCR/
+│       ├── DaktLib.ML/
+│       ├── DaktLib.Export/
+│       └── DaktLib.Capture/
+│
+├── examples/               # Example applications
+│   ├── rust/
+│   └── csharp/
+│
+└── docs/                   # Additional documentation
+    ├── api/
+    └── tutorials/
+```
+
+### Current Folder Mapping
+
+| Current Folder | New Crate Location |
+|----------------|-------------------|
+| `Events/` | `crates/daktlib-events/` |
+| `Export/` | `crates/daktlib-export/` |
+| `GUI/` | `crates/daktlib-gui/` |
+| `Http/` | `crates/daktlib-http/` |
+| `Logger/` | `crates/daktlib-logger/` |
+| `OCR/` | `crates/daktlib-ocr/` |
+| `Overlay/` | `crates/daktlib-overlay/` |
+| `Parser/` | `crates/daktlib-parser/` |
+| `SQL/` | `crates/daktlib-sql/` |
+| `VFS/` | `crates/daktlib-vfs/` |
+| *(new)* | `crates/daktlib-ml/` |
+| *(new)* | `crates/daktlib-capture/` |
+
+---
+
+## Module Dependency Graph
+
+```
+                    ┌─────────────────┐
+                    │  daktlib-logger │ (TRAIT DEFINITIONS ONLY)
+                    │   LoggerTrait   │
+                    └────────┬────────┘
+                             │ (optional trait impl)
+        ┌────────────────────┼────────────────────┐
+        │                    │                    │
+        ▼                    ▼                    ▼
+┌───────────────┐   ┌───────────────┐   ┌───────────────┐
+│ daktlib-events│   │  daktlib-vfs  │   │ daktlib-http  │
+│  EventBusTrait│   │   VfsTrait    │   │  HttpTrait    │
+└───────┬───────┘   └───────┬───────┘   └───────┬───────┘
+        │                   │                   │
+        │           ┌───────┴───────┐           │
+        │           ▼               ▼           │
+        │   ┌───────────────┐ ┌───────────────┐ │
+        │   │daktlib-parser │ │  daktlib-sql  │ │
+        │   │  ParserTrait  │ │   SqlTrait    │ │
+        │   └───────────────┘ └───────────────┘ │
+        │                                       │
+        └───────────────┬───────────────────────┘
+                        │
+        ┌───────────────┼───────────────┐
+        ▼               ▼               ▼
+┌───────────────┐ ┌───────────────┐ ┌───────────────┐
+│  daktlib-gui  │ │daktlib-overlay│ │ daktlib-export│
+│   GuiTrait    │ │ OverlayTrait  │ │  ExportTrait  │
+└───────────────┘ └───────┬───────┘ └───────────────┘
+                          │
+                ┌─────────┴─────────┐
+                ▼                   ▼
+        ┌───────────────┐   ┌───────────────┐
+        │daktlib-capture│   │  daktlib-ocr  │
+        │ CaptureTrait  │   │   OcrTrait    │
+        └───────────────┘   └───────┬───────┘
+                                    │
+                                    ▼
+                            ┌───────────────┐
+                            │  daktlib-ml   │
+                            │   MlTrait     │
+                            └───────────────┘
+```
+
+### Key Points:
+
+1. **No hard dependencies** - Arrows represent *optional trait consumption*
+2. **Logger is universal** - Every module can optionally accept a `Logger` trait impl
+3. **Overlay + Capture + OCR** - Form the screen analysis pipeline
+4. **ML is leaf** - Used only by OCR for ONNX inference
+
+---
+
+## Plug-and-Play Architecture
+
+### Trait Definition Pattern
+
+Every module follows this pattern:
+
+```rust
+// In daktlib-logger/src/lib.rs
+
+/// The core logging trait - implement this to provide custom logging
+pub trait Logger: Send + Sync + 'static {
+    /// Log a message at the given level
+    fn log(&self, level: LogLevel, target: &str, message: &str);
     
-    auto parsed = parseToml(*data);
-    if (!parsed) return std::unexpected(parsed.error());
+    /// Flush any buffered logs
+    fn flush(&self);
     
-    return *parsed;
+    /// Check if a level is enabled
+    fn enabled(&self, level: LogLevel) -> bool;
+}
+
+/// Log levels supported by the logger
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(C)]  // For FFI compatibility
+pub enum LogLevel {
+    Trace = 0,
+    Debug = 1,
+    Info = 2,
+    Warn = 3,
+    Error = 4,
+}
+
+/// A no-op logger for when logging is disabled
+pub struct NullLogger;
+
+impl Logger for NullLogger {
+    fn log(&self, _: LogLevel, _: &str, _: &str) {}
+    fn flush(&self) {}
+    fn enabled(&self, _: LogLevel) -> bool { false }
+}
+
+/// Default file/console logger (optional feature)
+#[cfg(feature = "default-logger")]
+pub struct DefaultLogger { /* ... */ }
+```
+
+### Consumer Pattern
+
+```rust
+// In daktlib-ocr/src/lib.rs
+
+use daktlib_logger::{Logger, NullLogger};
+
+pub struct OcrEngine<L: Logger = NullLogger> {
+    logger: L,
+    // ... other fields
+}
+
+impl<L: Logger> OcrEngine<L> {
+    pub fn new(logger: L) -> Self {
+        Self { logger }
+    }
+    
+    pub fn recognize(&self, image: &[u8]) -> Result<String, OcrError> {
+        self.logger.log(LogLevel::Debug, "ocr", "Starting recognition");
+        // ... implementation
+    }
+}
+
+// Convenience constructor with no logging
+impl OcrEngine<NullLogger> {
+    pub fn without_logging() -> Self {
+        Self::new(NullLogger)
+    }
 }
 ```
 
-## Naming Conventions
+### Builder Pattern for Complex Modules
 
-- **Types**: PascalCase (`BufferReader`, `FileInfo`)
-- **Functions**: camelCase (`readFile`, `getSystemInfo`)
-- **Constants**: PascalCase or SCREAMING_SNAKE (`MaxPathLength`, `DAKT_VERSION`)
-- **Namespaces**: lowercase (`dakt::core`, `dakt::core::string`)
-- **Files**: PascalCase matching primary type (`Buffer.hpp`, `FileSystem.cpp`)
-- **Macros**: DAKT_ prefix, SCREAMING_SNAKE (`DAKT_ASSERT`, `DAKT_PLATFORM_WINDOWS`)
+```rust
+pub struct OverlayBuilder<L: Logger = NullLogger, C: Capture = NullCapture> {
+    logger: Option<L>,
+    capture: Option<C>,
+    // ... configuration
+}
 
-## Thread Safety
+impl OverlayBuilder {
+    pub fn new() -> Self { /* ... */ }
+    
+    pub fn with_logger<L: Logger>(self, logger: L) -> OverlayBuilder<L, _> {
+        // ...
+    }
+    
+    pub fn with_capture<C: Capture>(self, capture: C) -> OverlayBuilder<_, C> {
+        // ...
+    }
+    
+    pub fn build(self) -> Result<Overlay<L, C>, BuildError> {
+        // ...
+    }
+}
+```
 
-- **Core types**: Thread-safe for independent instances, not for shared access
-- **Logger**: Thread-safe (lock-free ring buffer for async)
-- **Events**: Main-thread only unless explicitly documented
-- **GUI**: Main-thread only
-- **File operations**: Thread-safe for independent files
+---
 
-## Memory Management
+## Cross-Cutting Concerns
 
-1. **Stack allocation** preferred for small, fixed-size data
-2. **Arena allocator** for temporary allocations with bulk free
-3. **Pool allocator** for fixed-size objects with frequent alloc/free
-4. **Heap allocator** as fallback, with optional tracking in debug builds
+### Error Handling
 
-## Future Considerations
+Each module defines its own error type that implements standard traits:
 
-- Coroutine support for async file I/O
-- GPU compute for texture processing
-- Plugin system for format handlers
-- Network layer for multiplayer tool features
+```rust
+// daktlib-error-derive macro (internal)
+#[derive(Debug, Clone)]
+pub enum OcrError {
+    InvalidImage { reason: String },
+    ModelNotLoaded,
+    InferenceFailed { code: i32 },
+    // ...
+}
+
+impl std::fmt::Display for OcrError { /* ... */ }
+impl std::error::Error for OcrError { /* ... */ }
+
+// FFI-safe error representation
+#[repr(C)]
+pub struct FfiError {
+    pub code: i32,
+    pub message: *const c_char,
+}
+```
+
+### Configuration
+
+```rust
+// Each module has a Config struct
+#[derive(Debug, Clone, Default)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+pub struct OcrConfig {
+    pub model_path: Option<PathBuf>,
+    pub language: String,
+    pub confidence_threshold: f32,
+}
+```
+
+### Async Support
+
+```rust
+// Gated behind "async" feature
+#[cfg(feature = "async")]
+pub trait AsyncLogger: Send + Sync + 'static {
+    fn log(&self, level: LogLevel, target: &str, message: &str) 
+        -> impl Future<Output = ()> + Send;
+}
+```
+
+---
+
+## C# Bindings Strategy
+
+### Generation Approach
+
+Using `csbindgen` for automatic generation:
+
+```rust
+// In each module's ffi.rs
+use csbindgen::*;
+
+#[no_mangle]
+pub extern "C" fn daktlib_logger_create() -> *mut Logger {
+    Box::into_raw(Box::new(DefaultLogger::new()))
+}
+
+#[no_mangle]
+pub extern "C" fn daktlib_logger_log(
+    logger: *mut Logger,
+    level: LogLevel,
+    message: *const c_char,
+) {
+    // ... safe wrapper
+}
+
+#[no_mangle]
+pub extern "C" fn daktlib_logger_destroy(logger: *mut Logger) {
+    if !logger.is_null() {
+        unsafe { drop(Box::from_raw(logger)); }
+    }
+}
+```
+
+### C# Wrapper Structure
+
+```csharp
+// DaktLib.Logger/Logger.cs
+namespace DaktLib.Logger
+{
+    public class Logger : IDisposable
+    {
+        private IntPtr _handle;
+        
+        public Logger()
+        {
+            _handle = NativeMethods.daktlib_logger_create();
+        }
+        
+        public void Log(LogLevel level, string message)
+        {
+            NativeMethods.daktlib_logger_log(_handle, level, message);
+        }
+        
+        public void Dispose()
+        {
+            if (_handle != IntPtr.Zero)
+            {
+                NativeMethods.daktlib_logger_destroy(_handle);
+                _handle = IntPtr.Zero;
+            }
+        }
+    }
+    
+    // Interface for custom implementations
+    public interface ILogger
+    {
+        void Log(LogLevel level, string message);
+        void Flush();
+    }
+}
+```
+
+### Build Integration
+
+```xml
+<!-- DaktLib.Logger.csproj -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <NativeLibrary Include="../../../target/release/daktlib_logger.dll" 
+                   Condition="'$(OS)' == 'Windows_NT'" />
+    <NativeLibrary Include="../../../target/release/libdaktlib_logger.so" 
+                   Condition="'$(OS)' == 'Unix'" />
+  </ItemGroup>
+</Project>
+```
+
+---
+
+## EasyAntiCheat Compliance
+
+### Allowed Techniques ✅
+
+| Technique | Module | Implementation |
+|-----------|--------|----------------|
+| Screen Capture | `daktlib-capture` | DXGI Desktop Duplication, BitBlt |
+| Overlay Windows | `daktlib-overlay` | Transparent WS_EX_TOPMOST windows |
+| Log File Parsing | `daktlib-parser` | Read Game.log externally |
+| HTTP API Calls | `daktlib-http` | RSI API, community APIs |
+| OCR on Screenshots | `daktlib-ocr` | Process captured frames |
+
+### Prohibited Techniques ❌
+
+| Technique | Why Prohibited |
+|-----------|----------------|
+| ReadProcessMemory | Direct game memory access |
+| WriteProcessMemory | Game memory modification |
+| DLL Injection | Code injection into game |
+| Import/Export Hooking | Function interception |
+| Direct3D Hooking | Graphics API interception |
+| Kernel Drivers | Ring-0 access |
+
+### Implementation Guidelines
+
+```rust
+// daktlib-capture: DXGI Desktop Duplication (Windows)
+pub struct DesktopDuplication {
+    // Uses IDXGIOutputDuplication - captures entire desktop
+    // No game process interaction
+}
+
+// daktlib-overlay: External Window (Windows)
+pub struct OverlayWindow {
+    // Creates WS_EX_TOPMOST | WS_EX_TRANSPARENT | WS_EX_LAYERED window
+    // Renders with Direct2D or GDI+ to our own window
+    // No injection into game process
+}
+```
+
+---
+
+## Build System
+
+### Cargo Workspace Configuration
+
+```toml
+# Cargo.toml (root)
+[workspace]
+resolver = "2"
+members = [
+    "crates/daktlib",
+    "crates/daktlib-logger",
+    "crates/daktlib-events",
+    "crates/daktlib-vfs",
+    "crates/daktlib-parser",
+    "crates/daktlib-sql",
+    "crates/daktlib-http",
+    "crates/daktlib-gui",
+    "crates/daktlib-overlay",
+    "crates/daktlib-ocr",
+    "crates/daktlib-ml",
+    "crates/daktlib-export",
+    "crates/daktlib-capture",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+license = "MIT"
+repository = "https://github.com/yourusername/DaktLib"
+authors = ["Your Name <your.email@example.com>"]
+
+[workspace.dependencies]
+# Internal dependencies (version = workspace)
+daktlib-logger = { path = "crates/daktlib-logger" }
+daktlib-events = { path = "crates/daktlib-events" }
+# ... etc
+
+[workspace.lints.rust]
+unsafe_code = "warn"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+all = "warn"
+pedantic = "warn"
+```
+
+### Makefile.toml (cargo-make)
+
+```toml
+[tasks.build-all]
+script = "cargo build --release --workspace"
+
+[tasks.build-csharp-bindings]
+dependencies = ["build-all"]
+script = """
+cd bindings/csharp
+dotnet build -c Release
+"""
+
+[tasks.test-all]
+script = "cargo nextest run --workspace"
+
+[tasks.audit]
+script = "cargo deny check"
+
+[tasks.docs]
+script = "cargo doc --workspace --no-deps"
+```
+
+---
+
+## Testing Strategy
+
+### Unit Tests
+
+```rust
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[test]
+    fn test_logger_levels() {
+        let logger = DefaultLogger::new();
+        assert!(logger.enabled(LogLevel::Error));
+    }
+}
+```
+
+### Integration Tests
+
+```rust
+// tests/integration/logger_ocr.rs
+#[test]
+fn test_ocr_with_custom_logger() {
+    struct TestLogger(Vec<String>);
+    impl Logger for TestLogger { /* ... */ }
+    
+    let logger = TestLogger(vec![]);
+    let ocr = OcrEngine::new(logger);
+    // ...
+}
+```
+
+### Property-Based Tests
+
+```rust
+#[cfg(test)]
+mod proptests {
+    use proptest::prelude::*;
+    
+    proptest! {
+        #[test]
+        fn parser_roundtrip(data: Vec<u8>) {
+            // ...
+        }
+    }
+}
+```
+
+### FFI Tests (C#)
+
+```csharp
+[Test]
+public void TestLoggerCreation()
+{
+    using var logger = new Logger();
+    logger.Log(LogLevel.Info, "Test message");
+    // No crash = success
+}
+```
+
+---
+
+## Module Specifications
+
+### Core Modules
+
+| Module | Purpose | Key Traits |
+|--------|---------|------------|
+| `daktlib-logger` | Logging abstraction | `Logger`, `AsyncLogger` |
+| `daktlib-events` | Event bus / pub-sub | `EventBus`, `EventHandler` |
+| `daktlib-vfs` | Virtual file system | `Vfs`, `VfsEntry` |
+| `daktlib-parser` | Game data parsing | `Parser`, `DataForge` |
+| `daktlib-sql` | Embedded database | `Database`, `Query` |
+| `daktlib-http` | HTTP client | `HttpClient`, `Request` |
+
+### GUI/Visual Modules
+
+| Module | Purpose | Key Traits |
+|--------|---------|------------|
+| `daktlib-gui` | Custom GUI framework | `Widget`, `Renderer` |
+| `daktlib-overlay` | Screen overlay | `Overlay`, `Layer` |
+| `daktlib-capture` | Screen capture | `Capture`, `Frame` |
+
+### ML/AI Modules
+
+| Module | Purpose | Key Traits |
+|--------|---------|------------|
+| `daktlib-ocr` | Text recognition | `OcrEngine`, `TextRegion` |
+| `daktlib-ml` | ONNX inference | `Model`, `Tensor` |
+
+### Utility Modules
+
+| Module | Purpose | Key Traits |
+|--------|---------|------------|
+| `daktlib-export` | Data export | `Exporter`, `Format` |
+
+---
+
+## Version History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 0.1.0 | 2026-01-03 | Initial architecture design |
+
+---
+
+## References
+
+- [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/)
+- [csbindgen Documentation](https://github.com/Cysharp/csbindgen)
+- [DXGI Desktop Duplication](https://docs.microsoft.com/en-us/windows/win32/direct3ddxgi/desktop-dup-api)
+- [ONNX Runtime](https://onnxruntime.ai/)
+- [Star Citizen EAC Documentation](https://support.robertsspaceindustries.com/)
