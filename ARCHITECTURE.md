@@ -63,40 +63,31 @@ Critical for Star Citizen utilities:
 
 ---
 
-## Module Overview
+## Module Overview (aligned with current READMEs)
 
-### Foundation Layer
+### Foundation
+- **DaktLib-Core**: header-first interfaces (logging, allocation, events, regions) and lightweight types (`Result`, `Span`, `StringView`).
+- **DaktLib-Logger**: multi-sink logging (console/file/async) with structured fields and C API.
+- **DaktLib-Events**: type-safe event bus, priorities, cancellation; C API planned.
 
-| Module | Purpose | Dependencies |
-|--------|---------|--------------|
-| **DaktLib-Core** | Header-only interfaces and types | None |
-| **DaktLib-Logger** | Multi-sink logging with async support | Core (optional) |
-| **DaktLib-Events** | Type-safe event bus | Core (optional) |
+### Data & Storage
+- **DaktLib-VFS**: virtual file system with mountable backends (physical, memory, mmap, zip/pak placeholders); streaming interfaces.
+- **DaktLib-Parser**: zero-dependency parsing toolkit (JSON/XML/INI/CSV, binary streams, game/asset formats like P4K, CryXML, CryModel, MTL, DCB, SOC/SOCPAK).
+- **DaktLib-SQL**: lightweight SQLite-style wrapper with connection pooling, query/schema builders, and C API (vendored amalgamation slot).
+- **DaktLib-Export**: FBX 7.5 exporter with USD-like stage/layer/prim model, layered PBR materials, animation, optional ASCII debug output; no external SDK.
+- **DaktLib-Decrypt**: CryEngine model chunk detection/decrypt/inspect (magic, chunk layouts, crypto/comp/hash), modular registries.
 
-### Data Layer
+### Services
+- **DaktLib-Http**: dependency-free HTTP client skeleton with platform-native backends (WinHTTP, CFNetwork, POSIX sockets), TLS abstraction, C API.
+- **DaktLib-Capture**: EAC-safe screen/window capture scaffolding (DXGI, WGC, PipeWire, X11, ScreenCaptureKit placeholders).
 
-| Module | Purpose | Dependencies |
-|--------|---------|--------------|
-| **DaktLib-VFS** | Virtual filesystem abstraction | Core (optional) |
-| **DaktLib-Parser** | JSON, XML, INI, CSV, binary parsing | Core (optional) |
-| **DaktLib-SQL** | SQLite wrapper with pooling | Core (optional), SQLite (vendored) |
-| **DaktLib-Export** | Multi-format data export | Core (optional) |
+### Compute & Vision
+- **DaktLib-ML**: on-device inference helper with runtime-loaded providers (ONNX Runtime, DirectML, TensorRT), C API.
+- **DaktLib-OCR**: OCR pipeline with pluggable backends (Windows.Media.Ocr, ONNX), preprocessing, EAC-safe (capture-only), C API.
 
-### Service Layer
-
-| Module | Purpose | Dependencies |
-|--------|---------|--------------|
-| **DaktLib-Http** | Async HTTP client | Core (optional) |
-| **DaktLib-Capture** | EAC-safe screen capture | Core (optional) |
-| **DaktLib-ML** | ONNX/DirectML/TensorRT inference | Core (optional), ONNX Runtime |
-
-### Integration Layer
-
-| Module | Purpose | Dependencies |
-|--------|---------|--------------|
-| **DaktLib-OCR** | OCR with pluggable regions | Core (optional), ML (optional) |
-| **DaktLib-Overlay** | Transparent overlay windows | Core (optional) |
-| **DaktLib-GUI** | Immediate-mode GUI framework | Core (optional) |
+### Presentation
+- **DaktLib-Overlay**: OS-native translucent overlays (WS_EX_LAYERED/DirectComposition, X11/Wayland, NSWindow/CoreAnimation), no hooks/injection, C API.
+- **DaktLib-GUI**: immediate-first GUI with optional retained tree, flex layout, SDF/MSDF text, and DX11/12/Vulkan/OpenGL/Metal backends; C API.
 
 ---
 
@@ -162,15 +153,16 @@ DaktLib/
 ├── DaktLib-Logger/            # Logging library
 ├── DaktLib-Events/            # Event bus
 ├── DaktLib-VFS/               # Virtual filesystem
-├── DaktLib-Parser/            # Format parsers
-├── DaktLib-SQL/               # Database wrapper
-├── DaktLib-Export/            # Data export
+├── DaktLib-Parser/            # Parsing toolkit (text + game/asset formats)
+├── DaktLib-SQL/               # SQLite-style wrapper
+├── DaktLib-Export/            # FBX exporter (USD-like model)
+├── DaktLib-Decrypt/           # CryEngine chunk decrypt/inspect
 ├── DaktLib-Http/              # HTTP client
-├── DaktLib-Capture/           # Screen capture
-├── DaktLib-ML/                # ML inference
-├── DaktLib-OCR/               # OCR engine
-├── DaktLib-Overlay/           # Overlay windows
-└── DaktLib-GUI/               # GUI framework
+├── DaktLib-Capture/           # Screen/window capture
+├── DaktLib-ML/                # Inference helper (runtime-loaded backends)
+├── DaktLib-OCR/               # OCR engine (pluggable backends)
+├── DaktLib-Overlay/           # Overlay windows (EAC-safe)
+└── DaktLib-GUI/               # GUI framework (multi-backend)
 ```
 
 ### Per-Module Structure
