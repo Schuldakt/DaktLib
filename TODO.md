@@ -1,424 +1,407 @@
-# DaktLib Development Roadmap
+# DaktLib Master TODO
 
-> Master TODO and development roadmap for DaktLib
+> Master roadmap for the DaktLib modular library suite.
 
----
+## Legend
 
-## Table of Contents
-
-1. [Project Phases](#project-phases)
-2. [Phase 0: Foundation](#phase-0-foundation)
-3. [Phase 1: Core Modules](#phase-1-core-modules)
-4. [Phase 2: Visual Modules](#phase-2-visual-modules)
-5. [Phase 3: ML/AI Modules](#phase-3-mlai-modules)
-6. [Phase 4: Integration](#phase-4-integration)
-7. [Phase 5: Polish](#phase-5-polish)
-8. [Module-Specific TODOs](#module-specific-todos)
-
----
-
-## Project Phases
-
-```
-Phase 0: Foundation     ████░░░░░░░░░░░░░░░░  20%  (Weeks 1-2)
-Phase 1: Core Modules   ░░░░░░░░░░░░░░░░░░░░   0%  (Weeks 3-8)
-Phase 2: Visual Modules ░░░░░░░░░░░░░░░░░░░░   0%  (Weeks 9-14)
-Phase 3: ML/AI Modules  ░░░░░░░░░░░░░░░░░░░░   0%  (Weeks 15-18)
-Phase 4: Integration    ░░░░░░░░░░░░░░░░░░░░   0%  (Weeks 19-22)
-Phase 5: Polish         ░░░░░░░░░░░░░░░░░░░░   0%  (Weeks 23-26)
-```
+| Symbol | Meaning |
+|--------|---------|
+| ⬜ | Not started |
+| 🔄 | In progress |
+| ✅ | Complete |
+| ❌ | Blocked/Cancelled |
+| 🔴 | Critical priority |
+| 🟡 | Medium priority |
+| 🟢 | Low priority |
 
 ---
 
-## Phase 0: Foundation
+## Phase 1: Foundation (Weeks 1-6)
 
-### 0.1 Project Setup
-- [x] Create repository structure
-- [x] Design high-level architecture (ARCHITECTURE.md)
-- [ ] Initialize Cargo workspace
-- [ ] Setup rust-toolchain.toml
-- [ ] Configure CI/CD (GitHub Actions)
-- [ ] Setup code coverage
-- [ ] Configure cargo-deny for license auditing
-- [ ] Create CONTRIBUTING.md
-- [ ] Create CODE_OF_CONDUCT.md
-- [ ] Setup branch protection rules
+> Core infrastructure that all other modules depend on.
 
-### 0.2 Development Environment
-- [ ] Create devcontainer configuration
-- [ ] Setup VS Code workspace settings
-- [ ] Create recommended extensions list
-- [ ] Setup pre-commit hooks (rustfmt, clippy)
-- [ ] Configure cargo-make tasks
+### DaktLib-Core 🔴
+- [ ] Project structure and CMakeLists.txt
+- [ ] `Result<T, E>` implementation with monadic operations
+- [ ] `Span<T>` non-owning view
+- [ ] `StringView` implementation
+- [ ] `ILogger` interface
+- [ ] `IAllocator` interface
+- [ ] `IEventBus` interface
+- [ ] `ISerializable` interface
+- [ ] `IRegionProvider` interface
+- [ ] C++23 concepts (`Loggable`, `Serializable`)
+- [ ] Unit tests
+- [ ] Documentation
 
-### 0.3 Documentation Infrastructure
-- [ ] Setup mdBook for documentation
-- [ ] Configure rustdoc settings
-- [ ] Create documentation templates
-- [ ] Setup API documentation generation
+### DaktLib-Logger 🔴
+- [ ] Project structure and CMakeLists.txt
+- [ ] `LogLevel` enum and `LogRecord` struct
+- [ ] `ISink` interface
+- [ ] `ConsoleSink` with ANSI colors
+- [ ] `FileSink` with rotation
+- [ ] `AsyncSink` wrapper
+- [ ] `Logger` class implementing `ILogger`
+- [ ] Structured logging support
+- [ ] `std::source_location` integration
+- [ ] C API (`dakt_logger_*`)
+- [ ] Unit tests
+- [ ] Documentation
 
-### 0.4 C# Bindings Infrastructure
-- [ ] Setup bindings/csharp directory structure
-- [ ] Create solution file (DaktLib.sln)
-- [ ] Configure csbindgen in build process
-- [ ] Create NuGet package templates
-- [ ] Setup C# documentation generation
+### DaktLib-Events 🔴
+- [ ] Project structure and CMakeLists.txt
+- [ ] Type-safe event registration
+- [ ] `EventBus` implementing `IEventBus`
+- [ ] Sync dispatch
+- [ ] Async dispatch
+- [ ] Event priorities
+- [ ] Event cancellation
+- [ ] RAII `Subscription` class
+- [ ] Weak reference support
+- [ ] C API (`dakt_events_*`)
+- [ ] Unit tests
+- [ ] Documentation
 
----
-
-## Phase 1: Core Modules
-
-### 1.1 daktlib-logger (Week 3)
-- [ ] Define `Logger` trait
-- [ ] Define `LogLevel` enum (FFI-safe)
-- [ ] Implement `NullLogger`
-- [ ] Implement `DefaultLogger` (feature-gated)
-- [ ] Add file rotation support
-- [ ] Add console coloring (feature-gated)
-- [ ] Create FFI exports
-- [ ] Generate C# bindings
-- [ ] Write unit tests
-- [ ] Write documentation
-- [ ] Create ARCHITECTURE.md for module
-- [ ] Create TODO.md for module
-
-### 1.2 daktlib-events (Week 4)
-- [ ] Define `Event` trait
-- [ ] Define `EventBus` trait
-- [ ] Define `EventHandler` trait
-- [ ] Implement sync event bus
-- [ ] Implement async event bus (feature-gated)
-- [ ] Add priority ordering
-- [ ] Add event filtering
-- [ ] Create FFI exports
-- [ ] Generate C# bindings
-- [ ] Write unit tests
-- [ ] Write documentation
-- [ ] Create ARCHITECTURE.md for module
-- [ ] Create TODO.md for module
-
-### 1.3 daktlib-vfs (Week 5)
-- [ ] Define `Vfs` trait
-- [ ] Define `VfsEntry` trait
-- [ ] Implement in-memory VFS
-- [ ] Implement directory-based VFS
-- [ ] Implement p4k archive reader (Star Citizen)
-- [ ] Add file watching support
-- [ ] Add caching layer
-- [ ] Create FFI exports
-- [ ] Generate C# bindings
-- [ ] Write unit tests
-- [ ] Write documentation
-- [ ] Create ARCHITECTURE.md for module
-- [ ] Create TODO.md for module
-
-### 1.4 daktlib-parser (Week 6)
-- [ ] Define `Parser` trait
-- [ ] Implement DataForge parser (Star Citizen)
-- [ ] Implement XML parser (custom, no deps)
-- [ ] Implement JSON parser (custom, no deps)
-- [ ] Implement CryXML parser
-- [ ] Add schema validation
-- [ ] Add streaming parser support
-- [ ] Create FFI exports
-- [ ] Generate C# bindings
-- [ ] Write unit tests
-- [ ] Write documentation
-- [ ] Create ARCHITECTURE.md for module
-- [ ] Create TODO.md for module
-
-### 1.5 daktlib-sql (Week 7)
-- [ ] Define `Database` trait
-- [ ] Define `Query` trait
-- [ ] Implement custom SQL parser
-- [ ] Implement B-tree storage engine
-- [ ] Implement page-based storage
-- [ ] Add indexing support
-- [ ] Add transaction support (ACID)
-- [ ] Add query optimizer
-- [ ] Create FFI exports
-- [ ] Generate C# bindings
-- [ ] Write unit tests
-- [ ] Write documentation
-- [ ] Create ARCHITECTURE.md for module
-- [ ] Create TODO.md for module
-
-### 1.6 daktlib-http (Week 8)
-- [ ] Define `HttpClient` trait
-- [ ] Define `Request`/`Response` types
-- [ ] Implement TCP socket layer
-- [ ] Implement TLS support (custom or minimal)
-- [ ] Implement HTTP/1.1 protocol
-- [ ] Add connection pooling
-- [ ] Add cookie handling
-- [ ] Add compression support
-- [ ] Create FFI exports
-- [ ] Generate C# bindings
-- [ ] Write unit tests
-- [ ] Write documentation
-- [ ] Create ARCHITECTURE.md for module
-- [ ] Create TODO.md for module
+### Infrastructure 🔴
+- [ ] Root CMakeLists.txt superbuild
+- [ ] CMakePresets.json
+- [ ] .clang-format configuration
+- [ ] .clang-tidy configuration
+- [ ] GitHub Actions CI/CD pipeline
+- [ ] Root README.md
 
 ---
 
-## Phase 2: Visual Modules
+## Phase 2: Data Layer (Weeks 7-14)
 
-### 2.1 daktlib-gui (Weeks 9-11)
-- [ ] Define `Widget` trait
-- [ ] Define `Renderer` trait
-- [ ] Define `Layout` system
-- [ ] Implement Direct2D renderer (Windows)
-- [ ] Implement Cairo renderer (Linux/macOS)
-- [ ] Implement widget system
-  - [ ] Label
-  - [ ] Button
-  - [ ] TextInput
-  - [ ] Checkbox
-  - [ ] RadioButton
-  - [ ] Slider
-  - [ ] ProgressBar
-  - [ ] ListView
-  - [ ] TreeView
-  - [ ] TabView
-  - [ ] ScrollView
-  - [ ] Panel/Container
-  - [ ] Window
-  - [ ] Menu/MenuBar
-  - [ ] ContextMenu
-  - [ ] Tooltip
-  - [ ] Dialog
-- [ ] Implement layout managers
-  - [ ] FlexBox
-  - [ ] Grid
-  - [ ] Stack (horizontal/vertical)
-  - [ ] Absolute positioning
-- [ ] Implement theming system
-- [ ] Add accessibility support
-- [ ] Create FFI exports
-- [ ] Generate C# bindings
-- [ ] Write unit tests
-- [ ] Write documentation
-- [ ] Create ARCHITECTURE.md for module
-- [ ] Create TODO.md for module
+> File handling, parsing, database, and export capabilities.
 
-### 2.2 daktlib-overlay (Weeks 12-13)
-- [ ] Define `Overlay` trait
-- [ ] Define `Layer` trait
-- [ ] Define `CaptureSource` trait (plug-and-play)
-- [ ] Implement Windows overlay (WS_EX_TOPMOST)
-- [ ] Implement X11 overlay (Linux)
-- [ ] Implement Cocoa overlay (macOS)
-- [ ] Add transparency support
-- [ ] Add click-through support
-- [ ] Add multi-monitor support
-- [ ] Add hotkey management
-- [ ] Integrate with daktlib-gui renderer
-- [ ] Create FFI exports
-- [ ] Generate C# bindings
-- [ ] Write unit tests
-- [ ] Write documentation
-- [ ] Create ARCHITECTURE.md for module
-- [ ] Create TODO.md for module
+### DaktLib-VFS 🟡
+- [ ] Project structure and CMakeLists.txt
+- [ ] `IStream` interface
+- [ ] `IBackend` interface
+- [ ] `Path` cross-platform normalization
+- [ ] Physical filesystem backend
+- [ ] Memory backend
+- [ ] Memory-mapped backend
+- [ ] ZIP archive backend
+- [ ] VFS mount system with priorities
+- [ ] File watching (Windows/Linux/macOS)
+- [ ] Async I/O support
+- [ ] C API (`dakt_vfs_*`)
+- [ ] Unit tests
+- [ ] Documentation
 
-### 2.3 daktlib-capture (Week 14)
-- [ ] Define `Capture` trait
-- [ ] Define `Frame` type
-- [ ] Implement DXGI Desktop Duplication (Windows)
-- [ ] Implement BitBlt fallback (Windows)
-- [ ] Implement X11 capture (Linux)
-- [ ] Implement CGDisplayStream (macOS)
-- [ ] Add region selection
-- [ ] Add frame rate limiting
-- [ ] Add format conversion (RGB, RGBA, YUV)
-- [ ] Create FFI exports
-- [ ] Generate C# bindings
-- [ ] Write unit tests
-- [ ] Write documentation
-- [ ] Create ARCHITECTURE.md for module
-- [ ] Create TODO.md for module
+### DaktLib-Parser 🟡
+- [ ] Project structure and CMakeLists.txt
+- [ ] Zero-copy `Reader` class
+- [ ] SAX handler interface
+- [ ] DOM node types
+- [ ] JSON parser (RFC 8259)
+- [ ] JSON writer
+- [ ] XML parser
+- [ ] XML writer
+- [ ] INI parser
+- [ ] CSV parser
+- [ ] Binary reader/writer (endian-aware)
+- [ ] Error recovery modes
+- [ ] C API (`dakt_parser_*`)
+- [ ] Unit tests
+- [ ] Documentation
+
+### DaktLib-SQL 🟡
+- [ ] Project structure and CMakeLists.txt
+- [ ] Vendor SQLite (public domain)
+- [ ] `Connection` RAII wrapper
+- [ ] `PreparedStatement` with binding
+- [ ] `ResultSet` iteration
+- [ ] `ConnectionPool` thread-safe
+- [ ] `Transaction` RAII
+- [ ] Query builder (fluent API)
+- [ ] Schema migrations
+- [ ] Async query execution
+- [ ] C API (`dakt_sql_*`)
+- [ ] Unit tests
+- [ ] Documentation
+
+### DaktLib-Export 🟡
+- [ ] Project structure and CMakeLists.txt
+- [ ] `IExporter` interface
+- [ ] CSV exporter
+- [ ] JSON exporter
+- [ ] XML exporter
+- [ ] HTML table exporter
+- [ ] Markdown table exporter
+- [ ] `StreamWriter` for large datasets
+- [ ] `ColumnMapper` transformations
+- [ ] `BatchExporter`
+- [ ] C API (`dakt_export_*`)
+- [ ] Unit tests
+- [ ] Documentation
 
 ---
 
-## Phase 3: ML/AI Modules
+## Phase 3: Services (Weeks 15-26)
 
-### 3.1 daktlib-ml (Weeks 15-16)
-- [ ] Define `Model` trait
-- [ ] Define `Tensor` trait
-- [ ] Define `InferenceSession` trait
-- [ ] Implement ONNX model loader
-- [ ] Implement ONNX Runtime wrapper (minimal API)
-- [ ] Add model quantization support
-- [ ] Add batching support
-- [ ] Add GPU acceleration (optional feature)
-- [ ] Add model caching
-- [ ] Create FFI exports
-- [ ] Generate C# bindings
-- [ ] Write unit tests
-- [ ] Write documentation
-- [ ] Create ARCHITECTURE.md for module
-- [ ] Create TODO.md for module
+> HTTP client and screen capture.
 
-### 3.2 daktlib-ocr (Weeks 17-18)
-- [ ] Define `OcrEngine` trait
-- [ ] Define `TextRegion` type
-- [ ] Define `CaptureSource` integration trait
-- [ ] Implement text detection model
-- [ ] Implement text recognition model
-- [ ] Add preprocessing pipeline
+### DaktLib-Http 🟡
+- [ ] Project structure and CMakeLists.txt
+- [ ] URL parser
+- [ ] `Request` / `Response` types
+- [ ] `HttpClient` class
+- [ ] HTTP/1.1 protocol implementation
+- [ ] Windows backend (WinHTTP)
+- [ ] Linux backend (POSIX sockets)
+- [ ] macOS backend (CFNetwork)
+- [ ] TLS support (platform-native)
+- [ ] Connection pooling
+- [ ] Timeouts and retry policies
+- [ ] C++20 coroutine support
+- [ ] Progress callbacks
+- [ ] Cookie handling
+- [ ] HTTP/2 support (stretch goal)
+- [ ] C API (`dakt_http_*`)
+- [ ] Unit tests
+- [ ] Documentation
+
+### DaktLib-Capture 🔴
+- [ ] Project structure and CMakeLists.txt
+- [ ] `ICaptureBackend` interface
+- [ ] `CaptureSession` class
+- [ ] `Frame` data structure
+- [ ] Windows: DXGI Desktop Duplication
+- [ ] Windows: Windows.Graphics.Capture
+- [ ] Linux: PipeWire backend
+- [ ] Linux: X11 XShm/XComposite
+- [ ] macOS: ScreenCaptureKit
+- [ ] macOS: CGWindowListCreateImage fallback
+- [ ] Multi-monitor support
+- [ ] Cursor capture option
+- [ ] Frame rate control
+- [ ] Pixel format conversion
+- [ ] C API (`dakt_capture_*`)
+- [ ] EAC compliance verification
+- [ ] Unit tests
+- [ ] Documentation
+
+---
+
+## Phase 4: AI/Vision (Weeks 27-34)
+
+> Machine learning and OCR capabilities.
+
+### DaktLib-ML 🟡
+- [ ] Project structure and CMakeLists.txt
+- [ ] `Tensor` class with shape/dtype
+- [ ] `IInferenceEngine` interface
+- [ ] ONNX Runtime backend
+- [ ] DirectML provider (Windows)
+- [ ] TensorRT backend (optional)
+- [ ] CPU fallback
+- [ ] Model loading/caching
+- [ ] Memory-mapped models
+- [ ] Session pooling
+- [ ] Batch inference
+- [ ] Preprocessing utilities
+- [ ] C API (`dakt_ml_*`)
+- [ ] Unit tests
+- [ ] Documentation
+
+### DaktLib-OCR 🔴
+- [ ] Project structure and CMakeLists.txt
+- [ ] `IOcrEngine` interface
+- [ ] `OcrResult` / `OcrWord` types
+- [ ] Windows.Media.Ocr backend
+- [ ] ONNX ML backend (via DaktLib-ML)
+- [ ] Image preprocessor pipeline
   - [ ] Grayscale conversion
-  - [ ] Threshold/binarization
-  - [ ] Noise reduction
-  - [ ] Deskewing
-- [ ] Add postprocessing
-  - [ ] Spell correction (optional)
-  - [ ] Confidence scoring
-- [ ] Integrate with daktlib-ml
-- [ ] Integrate with daktlib-capture
-- [ ] Add Star Citizen-specific optimizations
-- [ ] Create FFI exports
-- [ ] Generate C# bindings
-- [ ] Write unit tests
-- [ ] Write documentation
-- [ ] Create ARCHITECTURE.md for module
-- [ ] Create TODO.md for module
+  - [ ] Scaling
+  - [ ] Binarization (Otsu, adaptive)
+  - [ ] Denoising
+  - [ ] Morphological operations
+- [ ] `IRegionProvider` integration
+- [ ] `RegionCache` with change detection
+- [ ] DaktLib-Capture integration
+- [ ] C API (`dakt_ocr_*`)
+- [ ] Unit tests
+- [ ] Documentation
 
 ---
 
-## Phase 4: Integration
+## Phase 5: Presentation (Weeks 35-52+)
 
-### 4.1 daktlib-export (Week 19)
-- [ ] Define `Exporter` trait
-- [ ] Define `Format` enum
-- [ ] Implement JSON exporter
-- [ ] Implement CSV exporter
-- [ ] Implement XML exporter
-- [ ] Implement SQLite exporter
-- [ ] Implement custom binary format
-- [ ] Add streaming export support
-- [ ] Add compression support
-- [ ] Create FFI exports
-- [ ] Generate C# bindings
-- [ ] Write unit tests
-- [ ] Write documentation
-- [ ] Create ARCHITECTURE.md for module
-- [ ] Create TODO.md for module
+> Overlay and GUI systems.
 
-### 4.2 Meta-crate: daktlib (Week 20)
-- [ ] Create unified re-exports
-- [ ] Add feature flags for each module
-- [ ] Create prelude module
-- [ ] Write integration tests
-- [ ] Create usage examples
+### DaktLib-Overlay 🟡
+- [ ] Project structure and CMakeLists.txt
+- [ ] `IOverlayBackend` interface
+- [ ] `OverlayWindow` class
+- [ ] Windows: Layered windows (WS_EX_LAYERED)
+- [ ] Windows: DWM composition
+- [ ] Linux: X11 composite
+- [ ] Linux: Wayland layer-shell
+- [ ] macOS: NSWindow transparent
+- [ ] Click-through support
+- [ ] Multi-monitor support
+- [ ] DPI awareness
+- [ ] DaktLib-Capture integration
+- [ ] DaktLib-GUI integration
+- [ ] C API (`dakt_overlay_*`)
+- [ ] EAC compliance verification
+- [ ] Unit tests
+- [ ] Documentation
 
-### 4.3 Example Applications (Weeks 21-22)
-- [ ] Create Rust example: SC Log Parser
-- [ ] Create Rust example: Trading Overlay
-- [ ] Create Rust example: Mining OCR Helper
-- [ ] Create C# example: Inventory Manager
-- [ ] Create C# example: Fleet Tracker
-
----
-
-## Phase 5: Polish
-
-### 5.1 Documentation (Week 23)
-- [ ] Complete API documentation
-- [ ] Write getting started guide
-- [ ] Write migration guide
-- [ ] Create tutorials
-- [ ] Create video walkthroughs
-
-### 5.2 Performance (Week 24)
-- [ ] Profile all modules
-- [ ] Optimize hot paths
-- [ ] Reduce memory allocations
-- [ ] Benchmark against alternatives
-
-### 5.3 Security Audit (Week 25)
-- [ ] Audit unsafe code blocks
-- [ ] Review FFI boundary safety
-- [ ] Check for memory leaks
-- [ ] Validate input sanitization
-
-### 5.4 Release Preparation (Week 26)
-- [ ] Create release checklist
-- [ ] Write changelog
-- [ ] Prepare NuGet packages
-- [ ] Prepare crates.io packages
-- [ ] Create release announcements
-
----
-
-## Module-Specific TODOs
-
-Each module has its own detailed TODO in:
-- `crates/daktlib-logger/TODO.md`
-- `crates/daktlib-events/TODO.md`
-- `crates/daktlib-vfs/TODO.md`
-- `crates/daktlib-parser/TODO.md`
-- `crates/daktlib-sql/TODO.md`
-- `crates/daktlib-http/TODO.md`
-- `crates/daktlib-gui/TODO.md`
-- `crates/daktlib-overlay/TODO.md`
-- `crates/daktlib-capture/TODO.md`
-- `crates/daktlib-ml/TODO.md`
-- `crates/daktlib-ocr/TODO.md`
-- `crates/daktlib-export/TODO.md`
-
----
-
-## Priority Matrix
-
-| Module | Priority | Complexity | Dependencies |
-|--------|----------|------------|--------------|
-| logger | P0 (Critical) | Low | None |
-| events | P1 (High) | Medium | logger (optional) |
-| vfs | P1 (High) | High | logger (optional) |
-| parser | P1 (High) | High | vfs (optional), logger (optional) |
-| sql | P2 (Medium) | Very High | logger (optional) |
-| http | P2 (Medium) | High | logger (optional) |
-| gui | P1 (High) | Very High | logger (optional) |
-| overlay | P1 (High) | High | gui, logger (optional) |
-| capture | P1 (High) | Medium | logger (optional) |
-| ml | P2 (Medium) | High | logger (optional) |
-| ocr | P1 (High) | High | ml, capture, logger (optional) |
-| export | P2 (Medium) | Medium | logger (optional) |
+### DaktLib-GUI 🟡
+- [ ] Project structure and CMakeLists.txt
+- [ ] **Core**
+  - [ ] `Context` state management
+  - [ ] `IDStack` widget identification
+  - [ ] `InputState` handling
+  - [ ] `DrawList` command buffer
+- [ ] **Layout Engine**
+  - [ ] Flexbox container
+  - [ ] Justify/align content
+  - [ ] Grow/shrink/basis
+  - [ ] Wrapping and nesting
+  - [ ] Padding/margin/gap
+- [ ] **Primitives**
+  - [ ] Rectangle (with border radius)
+  - [ ] Circle, Ellipse
+  - [ ] Hexagon, Polygon
+  - [ ] Lines, Polylines
+  - [ ] Bezier curves
+  - [ ] Anti-aliasing
+- [ ] **Font System**
+  - [ ] TrueType parsing
+  - [ ] SDF generation
+  - [ ] Glyph atlas
+  - [ ] Text rendering
+  - [ ] Kerning
+- [ ] **Widgets**
+  - [ ] Button, ImageButton
+  - [ ] Label, Text
+  - [ ] TextInput (single/multi-line)
+  - [ ] Checkbox, Radio
+  - [ ] Slider, RangeSlider
+  - [ ] ProgressBar
+  - [ ] Dropdown, ComboBox
+  - [ ] ListBox, TreeView
+  - [ ] Tabs
+  - [ ] Tooltip, Modal
+  - [ ] Context menu
+  - [ ] Scrollable container
+- [ ] **Animation**
+  - [ ] Property animator
+  - [ ] Easing functions
+  - [ ] Keyframe animations
+  - [ ] Transitions
+  - [ ] Chaining
+- [ ] **Styling**
+  - [ ] Theme system
+  - [ ] Dark/Light themes
+  - [ ] Style overrides
+- [ ] **Render Backends**
+  - [ ] OpenGL 4.5+
+  - [ ] DirectX 11
+  - [ ] DirectX 12
+  - [ ] Vulkan
+  - [ ] Metal
+- [ ] **Advanced**
+  - [ ] Custom shaders
+  - [ ] Texture atlasing
+  - [ ] Retained mode containers
+- [ ] C API (`dakt_gui_*`)
+- [ ] Unit tests
+- [ ] Documentation
 
 ---
 
-## Risk Register
+## Phase 6: Bindings & Packaging (Ongoing)
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Custom GUI complexity | High | High | Start with minimal widget set |
-| ONNX licensing concerns | Medium | High | Use permissive ONNX Runtime license |
-| EAC false positives | Medium | Critical | Test with actual SC client |
-| Cross-platform issues | Medium | Medium | CI testing on all platforms |
-| C# binding generation | Low | Medium | Use battle-tested csbindgen |
-| Performance vs safety | Medium | Medium | Profile early and often |
+> C# bindings and distribution.
+
+### C# Bindings 🟢
+- [ ] ClangSharp integration
+- [ ] Per-module binding generation
+- [ ] Manual refinement layer
+- [ ] NuGet package structure
+- [ ] DaktLib.Core.CSharp
+- [ ] DaktLib.Logger.CSharp
+- [ ] DaktLib.Events.CSharp
+- [ ] DaktLib.VFS.CSharp
+- [ ] DaktLib.Parser.CSharp
+- [ ] DaktLib.SQL.CSharp
+- [ ] DaktLib.Export.CSharp
+- [ ] DaktLib.Http.CSharp
+- [ ] DaktLib.Capture.CSharp
+- [ ] DaktLib.ML.CSharp
+- [ ] DaktLib.OCR.CSharp
+- [ ] DaktLib.Overlay.CSharp
+- [ ] DaktLib.GUI.CSharp
+- [ ] Integration tests
+- [ ] Documentation
+
+### Packaging 🟢
+- [ ] CMake install targets
+- [ ] CMake find_package support
+- [ ] vcpkg port
+- [ ] Conan recipe
+- [ ] NuGet packages (native)
+- [ ] GitHub Releases automation
 
 ---
 
 ## Milestones
 
-| Milestone | Target Date | Deliverables |
-|-----------|-------------|--------------|
-| M1: Foundation | Week 2 | Workspace setup, CI, docs infrastructure |
-| M2: Core Complete | Week 8 | Logger, Events, VFS, Parser, SQL, HTTP |
-| M3: Visual Complete | Week 14 | GUI, Overlay, Capture |
-| M4: ML Complete | Week 18 | ML, OCR |
-| M5: Alpha Release | Week 22 | Full integration, examples |
-| M6: Beta Release | Week 26 | Polished, documented, tested |
+| Milestone | Target | Modules |
+|-----------|--------|---------|
+| **v0.1.0** | Week 6 | Core, Logger, Events |
+| **v0.2.0** | Week 14 | + VFS, Parser, SQL, Export |
+| **v0.3.0** | Week 26 | + Http, Capture |
+| **v0.4.0** | Week 34 | + ML, OCR |
+| **v0.5.0** | Week 44 | + Overlay |
+| **v1.0.0** | Week 52+ | + GUI, full C# bindings |
+
+---
+
+## Estimated Effort by Module
+
+| Module | Complexity | Weeks |
+|--------|------------|-------|
+| DaktLib-Core | Low | 1-2 |
+| DaktLib-Logger | Medium | 2-3 |
+| DaktLib-Events | Medium | 2-3 |
+| DaktLib-VFS | High | 8-12 |
+| DaktLib-Parser | High | 6-8 |
+| DaktLib-SQL | Medium | 4-5 |
+| DaktLib-Export | Medium | 3-4 |
+| DaktLib-Http | High | 16-18 |
+| DaktLib-Capture | High | 8-12 |
+| DaktLib-ML | High | 6-8 |
+| DaktLib-OCR | High | 6-8 |
+| DaktLib-Overlay | Medium | 6-8 |
+| DaktLib-GUI | Very High | 27-40 |
+
+**Total: ~95-130 weeks** (parallel work can reduce this significantly)
+
+---
+
+## Risk Register
+
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| EAC false positive | High | Test with live game, document compliance |
+| Platform API changes | Medium | Abstract behind interfaces |
+| C# binding complexity | Medium | Start with ClangSharp, refine manually |
+| GUI scope creep | High | Strict MVP definition per phase |
+| Performance issues | Medium | Profile early, benchmark continuously |
 
 ---
 
 ## Notes
 
-- All time estimates assume full-time development
-- Adjust timeline based on actual complexity discovered
-- Prioritize Star Citizen-specific features for early user feedback
-- Consider community contributions after M5
-
----
-
-*Last Updated: 2026-01-03*
+- Start with Windows as primary platform (Star Citizen focus)
+- Linux/macOS support can follow
+- GUI module is largest effort — consider splitting phases
+- C# bindings should be generated incrementally per module

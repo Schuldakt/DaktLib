@@ -1,36 +1,42 @@
-[submodule "Events"]
-	path = Events
-	url = https://github.com/Schuldakt/DaktLib-Events.git
-[submodule "Export"]
-	path = Export
-	url = https://github.com/Schuldakt/DaktLib-Export.git
-[submodule "GUI"]
-	path = GUI
-	url = https://github.com/Schuldakt/DaktLib-GUI.git
-[submodule "Logger"]
-	path = Logger
-	url = https://github.com/Schuldakt/DaktLib-Logger.git
-[submodule "OCR"]
-	path = OCR
-	url = https://github.com/Schuldakt/DaktLib-OCR.git
-[submodule "Overlay"]
-	path = Overlay
-	url = https://github.com/Schuldakt/DaktLib-Overlay.git
-[submodule "Parser"]
-	path = Parser
-	url = https://github.com/Schuldakt/DaktLib-Parser.git
-[submodule "VFS"]
-	path = VFS
-	url = https://github.com/Schuldakt/DaktLib-VFS.git
-[submodule "Http"]
-	path = Http
-	url = https://github.com/Schuldakt/DaktLib-Http.git
-[submodule "SQL"]
-	path = SQL
-	url = https://github.com/Schuldakt/DaktLib-SQL.git
-[submodule "Capture"]
-	path = Capture
+[submodule "DaktLib-Capture"]
+	path = DaktLib-Capture
 	url = https://github.com/Schuldakt/DaktLib-Capture.git
-[submodule "ML"]
-	path = ML
+[submodule "DaktLib-Events"]
+	path = DaktLib-Events
+	url = https://github.com/Schuldakt/DaktLib-Events.git
+[submodule "DaktLib-Export"]
+	path = DaktLib-Export
+	url = https://github.com/Schuldakt/DaktLib-Export.git
+[submodule "DaktLib-GUI"]
+	path = DaktLib-GUI
+	url = https://github.com/Schuldakt/DaktLib-GUI.git
+[submodule "DaktLib-Logger"]
+	path = DaktLib-Logger
+	url = https://github.com/Schuldakt/DaktLib-Logger.git
+[submodule "DaktLib-ML"]
+	path = DaktLib-ML
 	url = https://github.com/Schuldakt/DaktLib-ML.git
+[submodule "DaktLib-OCR"]
+	path = DaktLib-OCR
+	url = https://github.com/Schuldakt/DaktLib-OCR.git
+[submodule "DaktLib-Overlay"]
+	path = DaktLib-Overlay
+	url = https://github.com/Schuldakt/DaktLib-Overlay.git
+[submodule "DaktLib-Parser"]
+	path = DaktLib-Parser
+	url = https://github.com/Schuldakt/DaktLib-Parser.git
+[submodule "DaktLib-SQL"]
+	path = DaktLib-SQL
+	url = https://github.com/Schuldakt/DaktLib-SQL.git
+[submodule "DaktLib-VFS"]
+	path = DaktLib-VFS
+	url = https://github.com/Schuldakt/DaktLib-VFS.git
+[submodule "DaktLib-Http"]
+	path = DaktLib-Http
+	url = https://github.com/Schuldakt/DaktLib-Http.git
+[submodule "DaktLib-Core"]
+	path = DaktLib-Core
+	url = https://github.com/Schuldakt/DaktLib-Core.git
+[submodule "DaktLib-Decrypt"]
+	path = DaktLib-Decrypt
+	url = https://github.com/Schuldakt/DaktLib-Decrypt.git
